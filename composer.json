@@ -1,0 +1,22 @@
+{
+    "name": "tom/schemer",
+    "description": "A Joi-like interface for validating data structures.",
+    "license": "ISC",
+    "require-dev": {
+        "crysalead/kahlan": "^2.5"
+    },
+    "scripts": {
+        "test": "vendor/bin/kahlan --spec=test --pattern=*.php --reporter=verbose"
+    },
+    "type": "library",
+    "autoload": {
+        "psr-4": {
+            "Schemer\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Schemer\\Test\\": "test/"
+        }
+    }
+}

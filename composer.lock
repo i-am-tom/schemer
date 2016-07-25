@@ -1,0 +1,70 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "This file is @generated automatically"
+    ],
+    "hash": "67697aa70fc9fef21790450b5dd307ad",
+    "content-hash": "a2f3501d0097fa962d4798fd9bd60f30",
+    "packages": [
+        {
+            "name": "crysalead/kahlan",
+            "version": "2.5.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/crysalead/kahlan.git",
+                "reference": "0f5deb7faa3a7a324bf0dc0186190ea18bc1eff3"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/crysalead/kahlan/zipball/0f5deb7faa3a7a324bf0dc0186190ea18bc1eff3",
+                "reference": "0f5deb7faa3a7a324bf0dc0186190ea18bc1eff3",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4"
+            },
+            "bin": [
+                "bin/kahlan"
+            ],
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Kahlan\\": "src/"
+                },
+                "files": [
+                    "src/init.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "CrysaLEAD"
+                }
+            ],
+            "description": "Behavior-Driven Development (BDD) library.",
+            "keywords": [
+                "BDD",
+                "Behavior-Driven Development",
+                "Monkey Patching",
+                "TDD",
+                "mock",
+                "stub",
+                "testing",
+                "unit test"
+            ],
+            "time": "2016-06-15 15:07:49"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": [],
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": [],
+    "platform-dev": []
+}
