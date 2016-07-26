@@ -60,9 +60,10 @@ class Schemer
      * The value must be a collection of a given type.
      * @return Schemer\Validator\Collection
      */
-    public static function collection() : Validator\Collection
-    {
-        return new Validator\Collection;
+    public static function collection(
+        Validator\ValidatorAbstract $validator
+    ) : Validator\Collection {
+        return new Validator\Collection($validator);
     }
 
     /**
@@ -72,14 +73,21 @@ class Schemer
      */
     public static function instanceOf(string $comparison) : Validator\Any
     {
-        return self::any()->but(
-            Validator\ValidatorAbstract::predicate(
-                function ($value) use ($comparison) : Result {
-                    return $value instanceof $comparison;
-                },
-                "not an instance of $comparison"
+        return self::any()
+            ->but(
+                Validator\ValidatorAbstract::strictPredicate(
+                    'is_object',
+                    'not an object'
+                )
             )
-        );
+            ->but(
+                Validator\ValidatorAbstract::predicate(
+                    function ($value) use ($comparison) : bool {
+                        return $value instanceof $comparison;
+                    },
+                    "not an instance of $comparison"
+                )
+            );
     }
 
     /**

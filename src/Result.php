@@ -33,7 +33,7 @@ class Result
      * @param Result $that
      * @return Schemer\Result
      */
-    public function concat(Result $that)
+    public function concat(Result $that) : Result
     {
         if (!$this->isError()) {
             return $that;
@@ -66,7 +66,7 @@ class Result
     /**
      * Return a validation failure.
      * @param string $error
-     * @return Result
+     * @return Schemer\Result
      */
     public static function failure(string $error) : Result
     {

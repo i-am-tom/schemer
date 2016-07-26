@@ -5,70 +5,408 @@ namespace Schemer\Test;
 use Schemer\Result;
 
 describe(Result::class, function () {
-    it('constructs a success', function () {
-        $success = Result::success();
+    context('::success', function () {
+        it('returns false on isError()', function () {
+            expect(Result::success()->isError())->toBe(false);
+        });
 
-        expect($success->isError())->toBe(false);
-        expect($success->errors())->toBe([]);
+        it('returns false on isFatal()', function () {
+            expect(Result::success()->isFatal())->toBe(false);
+        });
+
+        it('returns no errors', function () {
+            expect(Result::success()->errors())->toBe([]);
+        });
     });
 
-    it('constructs a failure', function () {
-        $failure = Result::failure('test');
+    context('::failure', function () {
+        it('returns true on isError()', function () {
+            expect(
+                Result::failure('test')
+                    ->isError()
+            )->toBe(true);
+        });
 
-        expect($failure->isError())->toBe(true);
-        expect($failure->errors())->toBe(['test']);
+        it('returns false on isFatal()', function () {
+            expect(
+                Result::failure('test')
+                    ->isFatal()
+            )->toBe(false);
+        });
+
+        it('returns an error', function () {
+            expect(
+                Result::failure('test')
+                    ->errors()
+            )->toBe(['test']);
+        });
     });
 
-    it('concatenates success', function () {
-        $test = Result::success()
-            ->concat(Result::success());
+    context('::fatal', function () {
+        it('returns true on isError()', function () {
+            expect(
+                Result::fatal('test')
+                    ->isError()
+            )->toBe(true);
+        });
 
-        expect($test->errors())->toBe([]);
-        expect($test->isError())->toBe(false);
+        it('returns true on isFatal()', function () {
+            expect(
+                Result::fatal('test')
+                    ->isFatal()
+            )->toBe(true);
+        });
+
+        it('returns an error', function () {
+            expect(
+                Result::fatal('test')
+                    ->errors()
+            )->toBe(['test']);
+        });
     });
 
-    it('concatenates failures', function () {
-        $test = Result::failure('a')
-            ->concat(Result::failure('b'));
+    context('::concat', function () {
+        context('Success-success', function () {
+            it('returns no errors', function () {
+                expect(
+                    Result::success()
+                        ->concat(Result::success())
+                        ->errors()
+                )->toBe([]);
+            });
 
-        expect($test->errors())->toBe(['a', 'b']);
-        expect($test->isError())->toBe(true);
+            it('is not fatal', function () {
+                expect(
+                    Result::success()
+                        ->concat(Result::success())
+                        ->isFatal()
+                )->toBe(false);
+            });
+
+            it('is not an error', function () {
+                expect(
+                    Result::success()
+                        ->concat(Result::success())
+                        ->isError()
+                )->toBe(false);
+            });
+        });
+
+        context('Success-failure', function () {
+            it('returns an error', function () {
+                expect(
+                    Result::success()
+                        ->concat(Result::failure('b'))
+                        ->errors()
+                )->toBe(['b']);
+            });
+
+            it('is not fatal', function () {
+                expect(
+                    Result::success()
+                        ->concat(Result::failure('b'))
+                        ->isFatal()
+                )->toBe(false);
+            });
+
+            it('is an error', function () {
+                expect(
+                    Result::success()
+                        ->concat(Result::failure('b'))
+                        ->isError()
+                )->toBe(true);
+            });
+        });
+
+        context('Success-fatal', function () {
+            it('returns an error', function () {
+                expect(
+                    Result::success()
+                        ->concat(Result::fatal('b'))
+                        ->errors()
+                )->toBe(['b']);
+            });
+
+            it('is fatal', function () {
+                expect(
+                    Result::success()
+                        ->concat(Result::fatal('b'))
+                        ->isFatal()
+                )->toBe(true);
+            });
+
+            it('is an error', function () {
+                expect(
+                    Result::success()
+                        ->concat(Result::fatal('b'))
+                        ->isError()
+                )->toBe(true);
+            });
+        });
+
+        context('Failure-success', function () {
+            it('returns an error', function () {
+                expect(
+                    Result::failure('a')
+                        ->concat(Result::success())
+                        ->errors()
+                )->toBe(['a']);
+            });
+
+            it('is not fatal', function () {
+                expect(
+                    Result::failure('a')
+                        ->concat(Result::success())
+                        ->isFatal()
+                )->toBe(false);
+            });
+
+            it('is an error', function () {
+                expect(
+                    Result::failure('a')
+                        ->concat(Result::success())
+                        ->isError()
+                )->toBe(true);
+            });
+        });
+
+        context('Failure-failure', function () {
+            it('returns errors', function () {
+                expect(
+                    Result::failure('a')
+                        ->concat(Result::failure('b'))
+                        ->errors()
+                )->toBe(['a', 'b']);
+            });
+
+            it('is not fatal', function () {
+                expect(
+                    Result::failure('a')
+                        ->concat(Result::failure('b'))
+                        ->isFatal()
+                )->toBe(false);
+            });
+
+            it('is an error', function () {
+                expect(
+                    Result::failure('a')
+                        ->concat(Result::failure('b'))
+                        ->isError()
+                )->toBe(true);
+            });
+        });
+
+        context('Failure-fatal', function () {
+            it('returns errors', function () {
+                expect(
+                    Result::failure('a')
+                        ->concat(Result::fatal('b'))
+                        ->errors()
+                )->toBe(['a', 'b']);
+            });
+
+            it('is fatal', function () {
+                expect(
+                    Result::failure('a')
+                        ->concat(Result::fatal('b'))
+                        ->isFatal()
+                )->toBe(true);
+            });
+
+            it('is an error', function () {
+                expect(
+                    Result::failure('a')
+                        ->concat(Result::fatal('b'))
+                        ->isError()
+                )->toBe(true);
+            });
+        });
+
+        context('Fatal-success', function () {
+            it('returns an error', function () {
+                expect(
+                    Result::fatal('a')
+                        ->concat(Result::success())
+                        ->errors()
+                )->toBe(['a']);
+            });
+
+            it('is fatal', function () {
+                expect(
+                    Result::fatal('a')
+                        ->concat(Result::success())
+                        ->isFatal()
+                )->toBe(true);
+            });
+
+            it('is an error', function () {
+                expect(
+                    Result::fatal('a')
+                        ->concat(Result::success())
+                        ->isError()
+                )->toBe(true);
+            });
+        });
+
+        context('Fatal-failure', function () {
+            it('returns errors', function () {
+                expect(
+                    Result::fatal('a')
+                        ->concat(Result::failure('b'))
+                        ->errors()
+                )->toBe(['a', 'b']);
+            });
+
+            it('is fatal', function () {
+                expect(
+                    Result::fatal('a')
+                        ->concat(Result::failure('b'))
+                        ->isFatal()
+                )->toBe(true);
+            });
+
+            it('is an error', function () {
+                expect(
+                    Result::fatal('a')
+                        ->concat(Result::failure('b'))
+                        ->isError()
+                )->toBe(true);
+            });
+        });
+
+        context('Fatal-fatal', function () {
+            it('returns errors', function () {
+                expect(
+                    Result::fatal('a')
+                        ->concat(Result::fatal('b'))
+                        ->errors()
+                )->toBe(['a', 'b']);
+            });
+
+            it('is fatal', function () {
+                expect(
+                    Result::fatal('a')
+                        ->concat(Result::fatal('b'))
+                        ->isFatal()
+                )->toBe(true);
+            });
+
+            it('is an error', function () {
+                expect(
+                    Result::fatal('a')
+                        ->concat(Result::fatal('b'))
+                        ->isError()
+                )->toBe(true);
+            });
+        });
     });
 
-    it('concatenates mixtures', function () {
-        $test1 = Result::success()
-            ->concat(Result::failure('b'));
+    context('::map', function () {
+        context('Success', function () {
+            it('has no errors', function () {
+                expect(
+                    Result::success()
+                        ->map('strtoupper')
+                        ->errors()
+                )->toBe([]);
+            });
 
-        expect($test1->errors())->toBe(['b']);
-        expect($test1->isError())->toBe(true);
+            it('is not an error', function () {
+                expect(
+                    Result::success()
+                        ->map('strtoupper')
+                        ->isError()
+                )->toBe(false);
+            });
 
-        $test2 = Result::failure('b')
-            ->concat(Result::success());
+            it('is not fatal', function () {
+                expect(
+                    Result::success()
+                        ->map('strtoupper')
+                        ->isFatal()
+                )->toBe(false);
+            });
+        });
 
-        expect($test2->errors())->toBe(['b']);
-        expect($test2->isError())->toBe(true);
-    });
+        context('Failure', function () {
+            it('has a transformed error', function () {
+                expect(
+                    Result::failure('a')
+                        ->map('strtoupper')
+                        ->errors()
+                )->toBe(['A']);
+            });
 
-    it('maps over success', function () {
-        $test = Result::success()->map('strtoupper');
+            it('is an error', function () {
+                expect(
+                    Result::failure('a')
+                        ->map('strtoupper')
+                        ->isError()
+                )->toBe(true);
+            });
 
-        expect($test->errors())->toBe([]);
-        expect($test->isError())->toBe(false);
-    });
+            it('is not fatal', function () {
+                expect(
+                    Result::failure('a')
+                        ->map('strtoupper')
+                        ->isFatal()
+                )->toBe(false);
+            });
+        });
 
-    it('maps over failure', function () {
-        $test = Result::failure('a')->map('strtoupper');
+        context('Fatal', function () {
+            it('has a transformed error', function () {
+                expect(
+                    Result::fatal('a')
+                        ->map('strtoupper')
+                        ->errors()
+                )->toBe(['A']);
+            });
 
-        expect($test->errors())->toBe(['A']);
-        expect($test->isError())->toBe(true);
-    });
+            it('is an error', function () {
+                expect(
+                    Result::fatal('a')
+                        ->map('strtoupper')
+                        ->isError()
+                )->toBe(true);
+            });
 
-    it('maps over failures', function () {
-        $test = Result::failure('a')
-            ->concat(Result::failure('b'))
-            ->map('strtoupper');
+            it('is fatal', function () {
+                expect(
+                    Result::fatal('a')
+                        ->map('strtoupper')
+                        ->isFatal()
+                )->toBe(true);
+            });
+        });
 
-        expect($test->errors())->toBe(['A', 'B']);
-        expect($test->isError())->toBe(true);
+        context('Failures', function () {
+            it('transforms all errors', function () {
+                expect(
+                    Result::failure('a')
+                        ->concat(Result::failure('b'))
+                        ->map('strtoupper')
+                        ->errors()
+                )->toBe(['A', 'B']);
+            });
+
+            it('is an error', function () {
+                expect(
+                    Result::failure('a')
+                        ->concat(Result::failure('b'))
+                        ->map('strtoupper')
+                        ->isError()
+                )->toBe(true);
+            });
+
+            it('is not fatal', function () {
+                expect(
+                    Result::failure('a')
+                        ->concat(Result::failure('b'))
+                        ->map('strtoupper')
+                        ->isFatal()
+                )->toBe(false);
+            });
+        });
     });
 });
