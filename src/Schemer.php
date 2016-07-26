@@ -33,7 +33,7 @@ class Schemer
                     }
                 }
 
-                Result::failure('not in the whitelist');
+                return Result::failure('not in the whitelist');
             }
         );
     }

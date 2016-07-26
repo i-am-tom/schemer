@@ -14,7 +14,9 @@ class Text extends ValidatorAbstract implements ValidatorInterface
      */
     public function __construct()
     {
-        $this->restrictions = [ self::predicate('is_string', 'not a string') ];
+        $this->restrictions = [
+            self::strictPredicate('is_string', 'not a string')
+        ];
     }
 
     /**

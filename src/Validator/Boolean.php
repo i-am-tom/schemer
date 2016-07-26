@@ -12,7 +12,9 @@ class Boolean extends ValidatorAbstract implements ValidatorInterface
      */
     public function __construct()
     {
-        $this->restrictions = [ self::predicate('is_bool', 'not a boolean') ];
+        $this->restrictions = [
+            self::strictPredicate('is_bool', 'not a boolean')
+        ];
     }
 
     /**

@@ -15,17 +15,18 @@ class Collection extends ValidatorAbstract implements ValidatorInterface
     public function __construct(ValidatorAbstract $validator)
     {
         $this->restrictions = [
-            self::predicate('is_array', 'not an array'),
+            self::strictPredicate('is_array', 'not an array'),
 
             self::predicate(
                 function (array $values) : bool {
-                    return array_keys($values) === range(0, count($values) - 1);
+                    return empty($values) ? true // Range edge case
+                        : array_keys($values) === range(0, count($values) - 1);
                 },
                 'not a standard array'
             ),
 
             function (array $values) use ($validator) : Result {
-                $result = $result->success();
+                $result = Result::success();
 
                 foreach ($values as $index => $value) {
                     $current = $validator->validate($value);
@@ -37,7 +38,7 @@ class Collection extends ValidatorAbstract implements ValidatorInterface
                     $result = $result->concat(
                         $current->map(function (string $error) use ($index) : string {
                             return "$error at index $index";
-                        });
+                        })
                     );
                 }
 

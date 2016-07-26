@@ -15,6 +15,8 @@ class Integer extends Real
      */
     public function __construct()
     {
-        $this->restrictions = [ self::predicate('is_int', 'not an integer') ];
+        $this->restrictions = [
+            self::strictPredicate('is_int', 'not an integer')
+        ];
     }
 }

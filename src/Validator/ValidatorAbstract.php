@@ -18,7 +18,7 @@ class ValidatorAbstract implements ValidatorInterface
     /**
      * Add another validator to the restrictions.
      * @param callable $validator The validator to add.
-     * @return Schemer\Validator\ValidatorAbstract A new validator.
+     * @return Schemer\Validator\ValidatorAbstract
      */
     protected function pipe(callable $validator) : ValidatorAbstract
     {
@@ -34,14 +34,21 @@ class ValidatorAbstract implements ValidatorInterface
      * @param string $error The failure error to use.
      * @return callable A restriction to pipe.
      */
-    public static function predicate(
-        callable $predicate,
-        string $error
-    ) : callable {
+    public static function predicate(callable $predicate, string $error) : callable {
         return function ($value) use ($predicate, $error) : Result {
-            return $predicate ($value)
-                ? Result::success()
-                : Result::failure($error);
+            return $predicate($value) ? Result::success() : Result::failure($error);
+        };
+    }
+
+    /**
+     * Create a strict (fatal-failing) restriction
+     * @param callable $predicate True/false-yielding function.
+     * @param string $error The failure error to use.
+     * @return callable The created function.
+     */
+    public static function strictPredicate(callable $predicate, string $error) : callable {
+        return function ($value) use ($predicate, $error) : Result {
+            return $predicate($value) ? Result::success() : Result::fatal($error);
         };
     }
 
@@ -55,6 +62,10 @@ class ValidatorAbstract implements ValidatorInterface
         return array_reduce(
             $this->restrictions,
             function ($result, $restriction) use ($value) : Result {
+                if ($result->isFatal()) {
+                  return $result;
+                }
+
                 return $result->concat($restriction($value));
             },
             Result::success()

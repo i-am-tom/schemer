@@ -16,7 +16,7 @@ class Assoc extends ValidatorAbstract implements ValidatorInterface
     public function __construct(array $schema)
     {
         $this->restrictions = [
-            self::predicate('is_array', 'not an array'),
+            self::strictPredicate('is_array', 'not an array'),
 
             function (array $assoc) use ($schema) : Result {
                 $result = Result::success();

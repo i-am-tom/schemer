@@ -14,6 +14,12 @@ class Result
     private $errors = [];
 
     /**
+     * Is this a fatal error?
+     * @var bool
+     */
+    private $fatal = false;
+
+    /**
      * Create a new result with the given errors.
      * @param array $errors
      */
@@ -37,13 +43,24 @@ class Result
             return $this;
         }
 
-
-        return new Result(
+        $result = new Result(
             array_merge(
                 $this->errors(),
                 $that->errors()
             )
         );
+
+        $result->fatal = $this->fatal || $that->fatal;
+        return $result; // Fatals are not recoverable.
+    }
+
+    /**
+     * Get the errors for this result.
+     * @return array
+     */
+    public function errors() : array
+    {
+        return $this->errors;
     }
 
     /**
@@ -57,6 +74,19 @@ class Result
     }
 
     /**
+     * Return a failure, stop checking this branch.
+     * @param string $error
+     * @return Schemer\Result
+     */
+    public static function fatal(string $error) : Result
+    {
+        $result = new self([$error]);
+        $result->fatal = true;
+
+        return $result;
+    }
+
+    /**
      * Are there any errors in this result?
      * @return boolean
      */
@@ -66,12 +96,12 @@ class Result
     }
 
     /**
-     * Get the errors for this result.
-     * @return array
+     * Is this a fatal error?
+     * @return boolean
      */
-    public function errors() : array
+    public function isFatal() : bool
     {
-        return $this->errors;
+        return $this->fatal;
     }
 
     /**
@@ -81,12 +111,15 @@ class Result
      */
     public function map(callable $f) : Result
     {
-        return new self(array_map($f, $this->errors));
+        $result = new self(array_map($f, $this->errors));
+        $result->fatal = $this->fatal;
+
+        return $result;
     }
 
     /**
      * Return a validation success.
-     * @return Result
+     * @return Schemer\Result
      */
     public static function success() : Result
     {
