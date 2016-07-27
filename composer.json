@@ -1,5 +1,5 @@
 {
-    "name": "tom/schemer",
+    "name": "i-am-tom/schemer",
     "description": "A Joi-like interface for validating data structures.",
     "license": "ISC",
     "require-dev": {
