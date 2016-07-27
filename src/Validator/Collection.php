@@ -48,6 +48,15 @@ class Collection extends ValidatorAbstract implements ValidatorInterface
     }
 
     /**
+     * Format "elements" for printing.
+     * @param int $count
+     * @return string
+     */
+    private static function elementf(int $count) : string {
+        return sprintf('%d element%s', $count, $count === 1 ? '' : 's');
+    }
+
+    /**
      * The collection must have exactly a given number of elements.
      * @param int $count The required number of elements.
      * @return Schemer\Validator\Collection
@@ -59,7 +68,7 @@ class Collection extends ValidatorAbstract implements ValidatorInterface
                 function (array $values) use ($count) : bool {
                     return count($values) === $count;
                 },
-                "not exactly $count elements"
+                'not exactly ' . self::elementf($count)
             )
         );
     }
@@ -76,7 +85,7 @@ class Collection extends ValidatorAbstract implements ValidatorInterface
                 function (array $values) use ($count) : bool {
                     return count($values) <= $count;
                 },
-                "not at most $count elements"
+                'not at most ' . self::elementf($count)
             )
         );
     }
@@ -93,7 +102,7 @@ class Collection extends ValidatorAbstract implements ValidatorInterface
                 function (array $values) use ($count) : bool {
                     return count($values) >= $count;
                 },
-                "not at least $count elements"
+                'not at least ' . self::elementf($count)
             )
         );
     }
@@ -101,13 +110,13 @@ class Collection extends ValidatorAbstract implements ValidatorInterface
     /**
      * This collection values must be ordered in some way.
      * @param callable $comparator A custom comparator function.
-     * @return Schemer\Validator\Schemer An updated clone.
+     * @return Schemer\Validator\Schemer
      */
     public function ordered(callable $comparator = null) : Collection
     {
         return $this->pipe(
             self::predicate(
-                function (array $values) use ($comparator) : array {
+                function (array $values) use ($comparator) : bool {
                     $sorted = $values;
 
                     $comparator !== null
