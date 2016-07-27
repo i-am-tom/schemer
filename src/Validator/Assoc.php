@@ -13,7 +13,7 @@ class Assoc extends ValidatorAbstract implements ValidatorInterface
      * The associative array must contain these keys.
      * @param array $schema The schema to validate.
      */
-    public function __construct(array $schema)
+    public function __construct(array $schema = [])
     {
         $this->restrictions = [
             self::strictPredicate('is_array', 'not an array'),
@@ -60,10 +60,7 @@ class Assoc extends ValidatorAbstract implements ValidatorInterface
                 function (array $assoc) use ($entries) : bool {
                     return count($assoc) === $entries;
                 },
-                sprintf(
-                    'doesn\'t have exactly %s',
-                    self::entryf($entries)
-                )
+                'doesn\'t have exactly ' . self::entryf($entries)
             )
         );
     }
@@ -80,7 +77,7 @@ class Assoc extends ValidatorAbstract implements ValidatorInterface
                 function (array $values) use ($entries) : bool {
                     return count($values) <= $entries;
                 },
-                sprintf('has over %s', self::entryf($entries))
+                'has over ' . self::entryf($entries)
             )
         );
     }
@@ -97,7 +94,7 @@ class Assoc extends ValidatorAbstract implements ValidatorInterface
                 function (array $values) use ($entries) : bool {
                     return count($values) >= $entries;
                 },
-                sprintf('has under %s', self::entryf($entries))
+                'has under ' . self::entryf($entries)
             )
         );
     }
@@ -121,6 +118,8 @@ class Assoc extends ValidatorAbstract implements ValidatorInterface
                     Result::failure("contains '$key'")
                 );
             }
+
+            return $result;
         });
     }
 
@@ -129,7 +128,7 @@ class Assoc extends ValidatorAbstract implements ValidatorInterface
      * @param array $schema The optional schema.
      * @return Schemer\Validator\Assoc
      */
-    public function optional(array $schema) : Result
+    public function optional(array $schema) : Assoc
     {
         return $this->pipe(function (array $values) use ($schema) : Result {
             $result = Result::success();
@@ -140,7 +139,11 @@ class Assoc extends ValidatorAbstract implements ValidatorInterface
                 }
 
                 $result = $result->concat(
-                    $validator->validate($values[$key])
+                    $validator
+                        ->validate($values[$key])
+                        ->map(function ($error) use ($key) {
+                            return "$key: $error";
+                        })
                 );
             }
 
