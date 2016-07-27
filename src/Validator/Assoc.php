@@ -124,6 +124,30 @@ class Assoc extends ValidatorAbstract implements ValidatorInterface
     }
 
     /**
+     * The associative array may only contain the following keys.
+     * @param array $keys The optional schema.
+     * @return Schemer\Validator\Assoc
+     */
+    public function only(array $keys)
+    {
+        return $this->pipe(function ($values) use ($keys) {
+            $result = Result::success();
+
+            foreach ($values as $key => $_) {
+                if (in_array($key, $keys)) {
+                    continue;
+                }
+
+                return $result->concat(
+                    Result::failure("contains '$key'")
+                );
+            }
+
+            return $result;
+        });
+    }
+
+    /**
      * The associative array may contain the given values.
      * @param array $schema The optional schema.
      * @return Schemer\Validator\Assoc
@@ -144,30 +168,6 @@ class Assoc extends ValidatorAbstract implements ValidatorInterface
                         ->map(function ($error) use ($key) {
                             return "$key: $error";
                         })
-                );
-            }
-
-            return $result;
-        });
-    }
-
-    /**
-     * The associative array may only contain the following keys.
-     * @param array $keys The optional schema.
-     * @return Schemer\Validator\Assoc
-     */
-    public function only(array $keys)
-    {
-        return $this->pipe(function ($values) use ($keys) {
-            $result = Result::success();
-
-            foreach ($values as $key => $_) {
-                if (in_array($key, $keys)) {
-                    continue;
-                }
-
-                return $result->concat(
-                    Result::failure("contains '$key'")
                 );
             }
 

@@ -14,14 +14,7 @@ class Any extends ValidatorAbstract implements ValidatorInterface
      */
     public function __construct()
     {
-        $this->restrictions = [
-            self::predicate(
-                function ($_) : bool {
-                    return true;
-                },
-                ''
-            )
-        ];
+        $this->restrictions = [];
     }
 
     /**
