@@ -20,6 +20,16 @@ class Text extends ValidatorAbstract implements ValidatorInterface
     }
 
     /**
+     * Format a character count for printing.
+     * @param int $count
+     * @return string
+     */
+    private static function characterf(int $count) : string
+    {
+        return sprintf('%d character%s', $count, $count === 1 ? '' : 's');
+    }
+
+    /**
      * This text must be alphanumeric.
      * @return Schemer\Validator\Text
      */
@@ -39,7 +49,7 @@ class Text extends ValidatorAbstract implements ValidatorInterface
                 function (string $value) : bool {
                     return filter_var($value, FILTER_VALIDATE_EMAIL) !== false;
                 },
-                "not an email"
+                'not an email'
             )
         );
     }
@@ -56,7 +66,7 @@ class Text extends ValidatorAbstract implements ValidatorInterface
                 function (string $value) use ($length) : bool {
                     return strlen($value) === $length;
                 },
-                "not exactly $length characters"
+                'not exactly ' . self::characterf($length)
             )
         );
     }
@@ -67,7 +77,7 @@ class Text extends ValidatorAbstract implements ValidatorInterface
      */
     public function lowercase() : Text
     {
-        return $this->pipe(self::predicate('ctype_lower', 'not lowercase'));
+        return $this->pipe(self::predicate('ctype_lower', 'not all lowercase'));
     }
 
     /**
@@ -82,7 +92,7 @@ class Text extends ValidatorAbstract implements ValidatorInterface
                 function (string $value) use ($length) : bool {
                     return strlen($value) <= $length;
                 },
-                "more than $length characters"
+                'more than ' . self::characterf($length)
             )
         );
     }
@@ -99,7 +109,7 @@ class Text extends ValidatorAbstract implements ValidatorInterface
                 function (string $value) use ($length) : bool {
                     return strlen($value) >= $length;
                 },
-                "not at least $length characters"
+                'not at least ' . self::characterf($length)
             )
         );
     }
@@ -127,6 +137,6 @@ class Text extends ValidatorAbstract implements ValidatorInterface
      */
     public function uppercase() : Text
     {
-        return $this->pipe(self::predicate('ctype_upper', 'not uppercase'));
+        return $this->pipe(self::predicate('ctype_upper', 'not all uppercase'));
     }
 }
