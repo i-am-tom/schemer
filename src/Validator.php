@@ -7,7 +7,7 @@ use Schemer\Validator;
 /**
  * The main Schemer entry point.
  */
-class Schemer
+class Validator
 {
     /**
      * The value can be anything.

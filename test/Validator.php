@@ -2,36 +2,34 @@
 
 namespace Schemer\Test;
 
-use Schemer\Schemer;
-use Schemer\Validator\{
-    Any,
-    Assoc,
-    Boolean,
-    Collection,
-    Integer,
-    Real,
-    Text
-};
+use Schemer\Validator;
+use Schemer\Validator\Any;
+use Schemer\Validator\Assoc;
+use Schemer\Validator\Boolean;
+use Schemer\Validator\Collection;
+use Schemer\Validator\Integer;
+use Schemer\Validator\Real;
+use Schemer\Validator\Text;
 
-class Test {}
+use stdClass;
 
-describe(Schemer::class, function () {
+describe(Validator::class, function () {
     context('::any', function () {
         it('constructs an Any instance', function () {
-            expect(Schemer::any())->toBeAnInstanceOf(Any::class);
+            expect(Validator::any())->toBeAnInstanceOf(Any::class);
         });
 
         context('Type-checking', function () {
             it('allows a boolean type', function () {
-                expect(Schemer::any()->validate(true)->errors())->toBe([]);
+                expect(Validator::any()->validate(true)->errors())->toBe([]);
             });
 
             it('allows a real type', function () {
-                expect(Schemer::any()->validate(1.0)->errors())->toBe([]);
+                expect(Validator::any()->validate(1.0)->errors())->toBe([]);
             });
 
             it('allows a string type', function () {
-                expect(Schemer::any()->validate('hello')->errors())->toBe([]);
+                expect(Validator::any()->validate('hello')->errors())->toBe([]);
             });
         });
     });
@@ -39,14 +37,14 @@ describe(Schemer::class, function () {
     context('::allow', function () {
         it('constructs an Any instance', function () {
             expect(
-                Schemer::allow(['test', 1.0, true, []]))
-                    ->toBeAnInstanceOf(Any::class);
+                Validator::allow(['test', 1.0, true, []])
+            )->toBeAnInstanceOf(Any::class);
         });
 
         context('Valid checking', function () {
             it('matches strings', function () {
                 expect(
-                    Schemer::allow(['test', 1.0, true, []])
+                    Validator::allow(['test', 1.0, true, []])
                         ->validate('test')
                         ->errors()
                 )->toBe([]);
@@ -54,7 +52,7 @@ describe(Schemer::class, function () {
 
             it('matches floats', function () {
                 expect(
-                    Schemer::allow(['test', 1.0, true, []])
+                    Validator::allow(['test', 1.0, true, []])
                         ->validate(1.0)
                         ->errors()
                 )->toBe([]);
@@ -62,7 +60,7 @@ describe(Schemer::class, function () {
 
             it('matches booleans', function () {
                 expect(
-                    Schemer::allow(['test', 1.0, true, []])
+                    Validator::allow(['test', 1.0, true, []])
                         ->validate(true)
                         ->errors()
                 )->toBe([]);
@@ -70,7 +68,7 @@ describe(Schemer::class, function () {
 
             it('matches arrays', function () {
                 expect(
-                    Schemer::allow(['test', 1.0, true, []])
+                    Validator::allow(['test', 1.0, true, []])
                         ->validate([])
                         ->errors()
                 )->toBe([]);
@@ -80,7 +78,7 @@ describe(Schemer::class, function () {
         context('Invalid checking', function () {
             it('rejects bad strings', function () {
                 expect(
-                    Schemer::allow(['test', 1.0, true, []])
+                    Validator::allow(['test', 1.0, true, []])
                         ->validate('toast')
                         ->errors()
                 )->toBe(['not in the whitelist']);
@@ -88,7 +86,7 @@ describe(Schemer::class, function () {
 
             it('rejects bad floats', function () {
                 expect(
-                    Schemer::allow(['test', 1.0, true, []])
+                    Validator::allow(['test', 1.0, true, []])
                         ->validate(2.0)
                         ->errors()
                 )->toBe(['not in the whitelist']);
@@ -96,7 +94,7 @@ describe(Schemer::class, function () {
 
             it('rejects bad booleans', function () {
                 expect(
-                    Schemer::allow(['test', 1.0, true, []])
+                    Validator::allow(['test', 1.0, true, []])
                         ->validate(false)
                         ->errors()
                 )->toBe(['not in the whitelist']);
@@ -104,7 +102,7 @@ describe(Schemer::class, function () {
 
             it('rejects bad arrays', function () {
                 expect(
-                    Schemer::allow(['test', 1.0, true, []])
+                    Validator::allow(['test', 1.0, true, []])
                         ->validate(['le gib'])
                         ->errors()
                 )->toBe(['not in the whitelist']);
@@ -115,14 +113,14 @@ describe(Schemer::class, function () {
     context('::assoc', function () {
         it('constructs an Assoc instance', function () {
             expect(
-                Schemer::assoc(['test' => Schemer::boolean()])
+                Validator::assoc(['test' => Validator::boolean()])
             )->toBeAnInstanceOf(Assoc::class);
         });
 
         context('Property validation', function () {
             it('validates single properties', function () {
                 expect(
-                    Schemer::assoc(['test' => Schemer::boolean()])
+                    Validator::assoc(['test' => Validator::boolean()])
                         ->validate(['test' => true])
                         ->errors()
                 )->toBe([]);
@@ -130,7 +128,7 @@ describe(Schemer::class, function () {
 
             it('Returns failures', function () {
                 expect(
-                    Schemer::assoc(['test' => Schemer::boolean()])
+                    Validator::assoc(['test' => Validator::boolean()])
                         ->validate(['test' => 'hello'])
                         ->errors()
                 )->toBe(['test: not a boolean']);
@@ -140,7 +138,7 @@ describe(Schemer::class, function () {
         context('Failing top-level validation', function () {
             it('fatals for non-arrays', function () {
                 expect(
-                    Schemer::assoc(['test' => Schemer::boolean()])
+                    Validator::assoc(['test' => Validator::boolean()])
                         ->validate(2)
                         ->isFatal()
                 )->toBe(true);
@@ -148,7 +146,7 @@ describe(Schemer::class, function () {
 
             it('returns errors', function () {
                 expect(
-                    Schemer::assoc(['test' => Schemer::boolean()])
+                    Validator::assoc(['test' => Validator::boolean()])
                         ->validate(2)
                         ->errors()
                 )->toBe(['not an array']);
@@ -158,13 +156,13 @@ describe(Schemer::class, function () {
 
     context('::boolean', function () {
         it('constructs a Boolean instance', function () {
-            expect(Schemer::boolean())->toBeAnInstanceOf(Boolean::class);
+            expect(Validator::boolean())->toBeAnInstanceOf(Boolean::class);
         });
 
         context('Valid values', function () {
             it('accepts a true value', function () {
                 expect(
-                    Schemer::boolean()
+                    Validator::boolean()
                         ->validate(true)
                         ->errors()
                 )->toBe([]);
@@ -172,7 +170,7 @@ describe(Schemer::class, function () {
 
             it('accepts a false value', function () {
                 expect(
-                    Schemer::boolean()
+                    Validator::boolean()
                         ->validate(false)
                         ->errors()
                 )->toBe([]);
@@ -182,7 +180,7 @@ describe(Schemer::class, function () {
         context('Invalid values', function () {
             it('rejects a float', function () {
                 expect(
-                    Schemer::boolean()
+                    Validator::boolean()
                         ->validate(1.0)
                         ->errors()
                 )->toBe(['not a boolean']);
@@ -190,7 +188,7 @@ describe(Schemer::class, function () {
 
             it('rejects a string', function () {
                 expect(
-                    Schemer::boolean()
+                    Validator::boolean()
                         ->validate('hello')
                         ->errors()
                 )->toBe(['not a boolean']);
@@ -201,14 +199,14 @@ describe(Schemer::class, function () {
     context('::collection', function () {
         it('constructs a Collection instance', function () {
             expect(
-                Schemer::collection(Schemer::text())
+                Validator::collection(Validator::text())
             )->toBeAnInstanceOf(Collection::class);
         });
 
         context('Valid values', function () {
             it('accepts an empty array', function () {
                 expect(
-                    Schemer::collection(Schemer::text())
+                    Validator::collection(Validator::text())
                         ->validate([])
                         ->errors()
                 )->toBe([]);
@@ -216,7 +214,7 @@ describe(Schemer::class, function () {
 
             it('accepts a non-empty array', function () {
                 expect(
-                    Schemer::collection(Schemer::text())
+                    Validator::collection(Validator::text())
                         ->validate(['test', 'blah'])
                         ->errors()
                 )->toBe([]);
@@ -226,7 +224,7 @@ describe(Schemer::class, function () {
         context('Invalid values', function () {
             it('rejects a bad value at index 0', function () {
                 expect(
-                    Schemer::collection(Schemer::text())
+                    Validator::collection(Validator::text())
                         ->validate([2])
                         ->errors()
                 )->toBe(['not a string at index 0']);
@@ -234,7 +232,7 @@ describe(Schemer::class, function () {
 
             it('rejects a bad value at non-zero index', function () {
                 expect(
-                    Schemer::collection(Schemer::text())
+                    Validator::collection(Validator::text())
                         ->validate(['', '', true])
                         ->errors()
                 )->toBe(['not a string at index 2']);
@@ -245,30 +243,30 @@ describe(Schemer::class, function () {
     context('::instanceOf', function () {
         it('constructs an Any instance', function () {
             expect(
-                Schemer::instanceOf(Test::class)
+                Validator::instanceOf(stdClass::class)
             )->toBeAnInstanceOf(Any::class);
         });
 
         context('Validation', function () {
             it('accepts classes of the correct type', function () {
                 expect(
-                    Schemer::instanceOf(Test::class)
-                        ->validate(new Test)
+                    Validator::instanceOf(stdClass::class)
+                        ->validate(new stdClass)
                         ->errors()
                 )->toBe([]);
             });
 
             it('rejects classes of the wrong type', function () {
                 expect(
-                    Schemer::instanceOf(Test::class)
-                        ->validate(new \stdclass)
+                    Validator::instanceOf(stdClass::class)
+                        ->validate(new Any)
                         ->errors()
-                )->toBe(['not an instance of Schemer\Test\Test']);
+                )->toBe(['not an instance of stdClass']);
             });
 
             it('rejects non-objects', function () {
                 expect(
-                    Schemer::instanceOf(Test::class)
+                    Validator::instanceOf(stdClass::class)
                         ->validate(1.0)
                         ->errors()
                 )->toBe(['not an object']);
@@ -279,14 +277,14 @@ describe(Schemer::class, function () {
     context('::integer', function () {
         it('constructs an Integer instance', function () {
             expect(
-                Schemer::integer()
+                Validator::integer()
             )->toBeAnInstanceOf(Integer::class);
         });
 
         context('Validation', function () {
             it('accepts integers', function () {
                 expect(
-                    Schemer::integer()
+                    Validator::integer()
                         ->validate(2)
                         ->errors()
                 )->toBe([]);
@@ -294,7 +292,7 @@ describe(Schemer::class, function () {
 
             it('rejects non-integers', function () {
                 expect(
-                    Schemer::integer()
+                    Validator::integer()
                         ->validate('test')
                         ->errors()
                 )->toBe(['not an integer']);
@@ -304,13 +302,13 @@ describe(Schemer::class, function () {
 
     context('::oneOf', function () {
         it('constructs an Any instance', function () {
-            expect(Schemer::oneOf([]))->toBeAnInstanceOf(Any::class);
+            expect(Validator::oneOf([]))->toBeAnInstanceOf(Any::class);
         });
 
         context('Empty validator lists', function () {
             it('fails for truthy values', function () {
                 expect(
-                    Schemer::oneOf([])
+                    Validator::oneOf([])
                         ->validate(1)
                         ->errors()
                 )->toBe(['matches none of the options']);
@@ -318,7 +316,7 @@ describe(Schemer::class, function () {
 
             it('fails for truthy values', function () {
                 expect(
-                    Schemer::oneOf([])
+                    Validator::oneOf([])
                         ->validate(0)
                         ->errors()
                 )->toBe(['matches none of the options']);
@@ -328,7 +326,7 @@ describe(Schemer::class, function () {
         context('Non-empty validator lists', function () {
             it('fails for invalid values', function () {
                 expect(
-                    Schemer::oneOf([Schemer::text()])
+                    Validator::oneOf([Validator::text()])
                         ->validate(2.0)
                         ->errors()
                 )->toBe(['matches none of the options']);
@@ -336,7 +334,7 @@ describe(Schemer::class, function () {
 
             it('passes for valid values', function () {
                 expect(
-                    Schemer::oneOf([Schemer::text()])
+                    Validator::oneOf([Validator::text()])
                         ->validate('test')
                         ->errors()
                 )->toBe([]);
@@ -347,14 +345,14 @@ describe(Schemer::class, function () {
     context('::real', function () {
         it('constructs an Real instance', function () {
             expect(
-                Schemer::real()
+                Validator::real()
             )->toBeAnInstanceOf(Real::class);
         });
 
         context('Validation', function () {
             it('accepts real', function () {
                 expect(
-                    Schemer::real()
+                    Validator::real()
                         ->validate(2.5)
                         ->errors()
                 )->toBe([]);
@@ -362,7 +360,7 @@ describe(Schemer::class, function () {
 
             it('rejects non-reals', function () {
                 expect(
-                    Schemer::real()
+                    Validator::real()
                         ->validate('test')
                         ->errors()
                 )->toBe(['not a float']);
@@ -373,14 +371,14 @@ describe(Schemer::class, function () {
     context('::reject', function () {
         it('constructs an Any instance', function () {
             expect(
-                Schemer::reject(['test', 1.0, true, []]))
-                    ->toBeAnInstanceOf(Any::class);
+                Validator::reject(['test', 1.0, true, []])
+            )->toBeAnInstanceOf(Any::class);
         });
 
         context('Valid checking', function () {
             it('matches strings', function () {
                 expect(
-                    Schemer::reject(['test', 1.0, true, []])
+                    Validator::reject(['test', 1.0, true, []])
                         ->validate('toast')
                         ->errors()
                 )->toBe([]);
@@ -388,7 +386,7 @@ describe(Schemer::class, function () {
 
             it('matches floats', function () {
                 expect(
-                    Schemer::reject(['test', 1.0, true, []])
+                    Validator::reject(['test', 1.0, true, []])
                         ->validate(2.0)
                         ->errors()
                 )->toBe([]);
@@ -396,7 +394,7 @@ describe(Schemer::class, function () {
 
             it('matches booleans', function () {
                 expect(
-                    Schemer::reject(['test', 1.0, true, []])
+                    Validator::reject(['test', 1.0, true, []])
                         ->validate(false)
                         ->errors()
                 )->toBe([]);
@@ -404,7 +402,7 @@ describe(Schemer::class, function () {
 
             it('matches arrays', function () {
                 expect(
-                    Schemer::reject(['test', 1.0, true, []])
+                    Validator::reject(['test', 1.0, true, []])
                         ->validate(['le gib'])
                         ->errors()
                 )->toBe([]);
@@ -414,7 +412,7 @@ describe(Schemer::class, function () {
         context('Invalid checking', function () {
             it('rejects bad strings', function () {
                 expect(
-                    Schemer::reject(['test', 1.0, true, []])
+                    Validator::reject(['test', 1.0, true, []])
                         ->validate('test')
                         ->errors()
                 )->toBe(['in the blacklist']);
@@ -422,7 +420,7 @@ describe(Schemer::class, function () {
 
             it('rejects bad floats', function () {
                 expect(
-                    Schemer::reject(['test', 1.0, true, []])
+                    Validator::reject(['test', 1.0, true, []])
                         ->validate(1.0)
                         ->errors()
                 )->toBe(['in the blacklist']);
@@ -430,7 +428,7 @@ describe(Schemer::class, function () {
 
             it('rejects bad booleans', function () {
                 expect(
-                    Schemer::reject(['test', 1.0, true, []])
+                    Validator::reject(['test', 1.0, true, []])
                         ->validate(true)
                         ->errors()
                 )->toBe(['in the blacklist']);
@@ -438,7 +436,7 @@ describe(Schemer::class, function () {
 
             it('rejects bad arrays', function () {
                 expect(
-                    Schemer::reject(['test', 1.0, true, []])
+                    Validator::reject(['test', 1.0, true, []])
                         ->validate([])
                         ->errors()
                 )->toBe(['in the blacklist']);
@@ -448,13 +446,13 @@ describe(Schemer::class, function () {
 
     context('::text', function () {
         it('constructs a Text instance', function () {
-            expect(Schemer::text())->toBeAnInstanceOf(Text::class);
+            expect(Validator::text())->toBeAnInstanceOf(Text::class);
         });
 
         context('Validation', function () {
             it('allows strings', function () {
                 expect(
-                    Schemer::text()
+                    Validator::text()
                         ->validate('hello')
                         ->errors()
                 )->toBe([]);
@@ -462,7 +460,7 @@ describe(Schemer::class, function () {
 
             it('rejects non-strings', function () {
                 expect(
-                    Schemer::text()
+                    Validator::text()
                         ->validate(2.0)
                         ->errors()
                 )->toBe(['not a string']);
