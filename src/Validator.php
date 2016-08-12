@@ -5,7 +5,7 @@ namespace Schemer;
 use Schemer\Validator;
 
 /**
- * The main Schemer entry point.
+ * The validation entry point.
  */
 class Validator
 {
@@ -40,6 +40,7 @@ class Validator
 
     /**
      * The value must be an associative array.
+     * @param array $schema The schema against which to validate.
      * @return Schemer\Validator\Assoc
      */
     public static function assoc(array $schema) : Validator\Assoc
@@ -58,6 +59,7 @@ class Validator
 
     /**
      * The value must be a collection of a given type.
+     * @param Schemer\Validator\ValidatorInterface $validator
      * @return Schemer\Validator\Collection
      */
     public static function collection(
@@ -101,6 +103,7 @@ class Validator
 
     /**
      * The value must match one of a given set of validators.
+     * @param array $validators The possible validators to use.
      * @return Schemer\Validator\Any
      */
     public static function oneOf(array $validators) : Validator\Any
