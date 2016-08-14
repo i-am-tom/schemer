@@ -10,6 +10,15 @@ use Schemer\Formatter;
 class Formatter
 {
     /**
+     * The value will not be affected.
+     * @return Schemer\Formatter\Any
+     */
+    public static function any() : Formatter\Any
+    {
+        return new Formatter\Any;
+    }
+
+    /**
      * The value will be typed as an associative array.
      * @param array $schema The schema against which to format.
      * @return Schemer\Formatter\Assoc

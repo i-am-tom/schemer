@@ -3,6 +3,7 @@
 namespace Schemer\Test;
 
 use Schemer\Formatter;
+use Schemer\Formatter\Any;
 use Schemer\Formatter\Assoc;
 use Schemer\Formatter\Boolean;
 use Schemer\Formatter\Collection;
@@ -13,6 +14,16 @@ use Schemer\Formatter\Text;
 use stdClass;
 
 describe(Formatter::class, function () {
+    context('::any', function () {
+        it('constructs an Any instance', function () {
+            expect(Formatter::any())->toBeAnInstanceOf(Any::class);
+        });
+
+        it('does not touch values', function () {
+            expect(Formatter::any()->format(3.5))->toBe(3.5);
+        });
+    });
+
     context('::assoc', function () {
         it('constructs an Assoc instance', function () {
             expect(
