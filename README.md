@@ -1,226 +1,177 @@
 # Schemer [![Build Status](https://travis-ci.org/i-am-tom/schemer.svg?branch=master)](https://travis-ci.org/i-am-tom/schemer)
 
-Schemer is a Joi-inspired library for validating complex data structures in PHP.
-Validators can be composed together to create larger validators for tasks such
-as schema-checking.
-
-## Example
+Schemer is a Joi-inspired library for validating and formatting data
+structures. Complex operations can be constructed by composition:
 
 ```php
 <?php
 
 include 'vendor/autoload.php';
 
-use Schemer\Schemer as S;
+use Schemer\Validator as V;
+use Schemer\Formatter as F;
 
-// An associative array...
-$myApiSchema = S::assoc([
-    // A 3-to-10-character alphanumeric string...
-    'username' => S::text()->min(3)->max(10)->alphanum(),
+$validator = V::assoc([
+    'username' => V::text()->min(3)->max(10)->alphanum(),
+    'age' => V::integer()->positive(),
+    'email' => V::text()->email(),
+    'friends' => V::collection(V::text()->min(3)->max(20))
+]);
 
-    // An email address...
-    'email' => S::text()->email(),
+$formatter = F::assoc([
+    'age' => F::integer(),
+    'friends' => F::collection(F::text())
+])->only(['username', 'age', 'email', 'friends']);
 
-    // A standard list (array) ...
-    'friends' => S::collection(
-        // ... of 3-to-20-character strings...
-        S::text()->min(3)->max(20)
-    )
-])
-    // And, optionally ...
-    ->optional([
-        // A boolean value...
-        'isWizard' => S::boolean()
-    ]);
+// $_GET = [
+//     'username' => 'agilebear',
+//     'email' => 'hey@no.com',
+//     'age' => '13'
+// ];
 
-$myApiSchema
-    ->validate([
-        'username' => 'agilebear',
-        'email' => 'hey@no.com',
-        'friends' => [
-            'lols',
-            'le gib',
-            'saffy',
-            'borb',
-            'creams',
-            'roy'
-        ]
-    ])
-    ->isError(); // false
+$formatted = $formatter->format($_GET);
+// $formatted = [
+//     'username' => 'agilebear',
+//     'email' => 'hey@no.com',
+//     'age' => 13,
+//     'friends' => []
+// ];
 
-$mistakes = $myApiSchema
-    ->validate([
-        'username' => 'imposter',
-        'friends' => 3
-    ]);
+$validator->validate($formatted)->isError(); // false
 
-$mistakes->isError(); // true
-$mistakes->errors(); // ["missing 'email'", "friends: not an array"]
+$result = $validator->validate([
+    'username' => 'criminal',
+    'friends' => 3
+]);
+
+$result->isError(); // true
+$result->errors();
+// [
+//     "missing 'age'",
+//     "missing 'email'",
+//     "friends: not an array"
+// ]
 ```
 
 ## API
 
-**All methods are immutable**. Calling a method will return a **new** validator,
-and not change the behaviour of the validator in any way:
+**All methods are immutable**. Calling a method will return a **new** object, and not change the previous one in any way:
 
 ```php
 <?php
 
-$integer = Schemer::Integer();
+$integer = Schemer\Validator::integer();
 $integer->min(2); // This returns a NEW validator.
 
-$integer->validate(1)->isError(); // false - the original is unchanged.
+$integer->validate(1)->isError(); // false
 ```
 
-### `Schemer\Schemer::any() : Schemer\Validator\Any`
-
-The `Any` validator will accept all values of any type.
-
-#### `->but(callable $restriction) : Schemer\Validator\Any`
-
-You can optionally add restrictions to `Any` using this method, which will pipe
-a customised restriction onto the end of the chain. This can be used to make any
-custom validator that you may need. (However, you could just extend the abstract
-in `Schemer\Validator\ValidatorAbstract`, or implement the underlying interface
-in `Schemer\Validator\ValidatorInterface` for more complicated validators).
-
-### `Schemer\Schemer::assoc(array $schema = []) : Schemer\Validator\Assoc`
-
-Create an associative array validator with an optional schema. If a schema is
-not supplied, this will be a standard associative array validator. However, if
-given an array where the keys all map to validators, they will be used to
-produce a validator for a particular schema in which all these keys are
-mandatory.
-
-#### `->length(int $count) : Schemer\Validator\Assoc`
-
-Require that the associative array must only have a certain number of entries.
-
-#### `->max(int $count) : Schemer\Validator\Assoc`
-
-Require that the associative array must have no more than a given number of
-entries.
-
-#### `->min(int $count) : Schemer\Validator\Assoc`
-
-Require that the associative array must have no less than a given number of
-entries.
-
-#### `->never(array $keys) : Schemer\Validator\Assoc`
-
-Require that the associative array never contains any of a given set of keys.
-
-#### `->optional(array $schema) : Schemer\Validator\Assoc`
-
-Similar to the constructor, this is a shape validator. However, the absence of
-keys specified here is not an error. Instead, _if_ the keys are present, these
-validators will be used.
-
-#### `->only(array $keys) : Schemer\Validator\Assoc`
-
-Require that the associative array only contains keys within this list.
-
-### `Schemer\Schemer::boolean() : Schemer\Validator\Boolean`
-
-Require that the value be a boolean.
-
-#### `->true() : Schemer\Validator\Boolean`
-
-Require that the boolean value be true.
-
-#### `->false() : Schemer\Validator\Boolean`
-
-Require that the boolean value be false.
-
-### `Schemer\Schemer::collection(Schemer\Validator\ValidatorAbstract $validator) : Schemer\Validator\Collection`
-
-The Collection validator will validate a list of items that adhere to a
-certain validator. The given validator is the "type" of all containing elements.
-
-#### `->length(int $count) : Schemer\Validator\Collection`
-
-Require that the collection have a certain length.
-
-#### `->max(int $count) : Schemer\Validator\Collection`
-
-Require that the collection be no longer than a certain length.
-
-#### `->min(int $count) : Schemer\Validator\Collection`
-
-Require that the collection be no shorter than a certain length.
-
-#### `->ordered(callable $comparator = null) : Schemer\Validator\Collection`
-
-Require that the entries be ordered according to some comparator.
-
-#### `->unique() : Schemer\Validator\Collection`
-
-Require that the entries be unique.
-
-### `Schemer\Schemer::Integer`
-
-See the entries for `Schemer\Real`; this is the same, but restricted to integers.
-
-### `Schemer\Schemer::Real`
-
-Create a validator for floating point / real numbers.
-
-#### `->exactly(float $value) : Schemer\Validator\Real`
-
-Require that the value be exactly a given number.
-
-#### `->max(float $value) : Schemer\Validator\Real`
-
-Require that the value be no more than some amount.
-
-#### `->min(float $value) : Schemer\Validator\Real`
-
-Require that the value be no less than some amount.
-
-#### `->negative() : Schemer\Validator\Real`
-
-Require that the value be no more than zero.
-
-#### `->positive() : Schemer\Validator\Real`
-
-Require that the value be no less than zero.
-
-### `Schemer\Schemer::text() : Schemer\Validator\Text`
-
-Create a validator for a string of text.
-
-#### `->alphanum() : Schemer\Validator\Text`
-
-Require that the contents of the string all be alphanumeric. For standard
-locales, this is `[a-zA-Z0-9]`.
-
-#### `->email() : Schemer\Validator\Text`
-
-Require that the string match an email regular expression.
-
-#### `->length(int $length) : Schemer\Validator\Text`
-
-Require that the string be of a certain length.
-
-#### `->lowercase() : Schemer\Validator\Text`
-
-Require that the string only contain lowercase letters.
-
-#### `->min(int $length) : Schemer\Validator\Text`
-
-Require that the string be at least a certain length.
-
-#### `->max(int $length) : Schemer\Validator\Text`
-
-Require that the string be at most a certain length.
-
-#### `->regex(string $regex) : Schemer\Validator\Text`
-
-Require that the string match a certain regular expression.
-
-#### `->uppercase() : Schemer\Validator\Text`
-
-Require that the string only contain uppercase letters.
+### `Schemer\Formatter`
+
+```php
+<?php
+
+// Format the value as an associative array with a [key => Formatter] schema.
+Schemer\Formatter::assoc(array $schema)
+    ->only(array $keys) // Strip unmentioned keys.
+    ->rename(string $from, string $to) // Rename a key.
+    ->strip(array $keys) // Strip mentioned keys.
+
+Schemer\Formatter::boolean() // Format as boolean.
+
+// Format the value to an array of elements formatted accordingly.
+Schemer\Formatter::collection(Schemer\Formatter\FormatterInterface $formatter)
+    // Sort the values, either with sort() or a given comparator.
+    ->sort(callable $comparator = null)
+    ->truncate(int $maximum) // Strip values after a given length.
+    ->unique() // Strip duplicates.
+
+Schemer\Formatter::integer()
+    ->abs() // Make the value positive if negative.
+    ->max(int $boundary) // Cap the value at a maximum.
+    ->min(int $boundary) // Make the value at least a minimum.
+
+Schemer\Formatter::real()
+    ->abs() // Make the value positive if negative.
+    ->max(int $boundary) // Cap the value at a maximum.
+    ->min(int $boundary) // Make the value at least a minimum.
+
+Schemer\Formatter::text()
+    ->lowercase() // Transform to lowercase.
+
+    // Replace according to a regular expression.
+    ->replace(string $regex, string $replacement)
+    ->translate(string $from, string $to) // Translate characters.
+    ->trim(string $mask = " \t\n\r\0\x0B") // Trim the string ends.
+    ->truncate(int $maximum) // Cut the string to a maximum length.
+    ->uppercase() // Transform to uppercase.
+```
+
+### `Schemer\Validator`
+
+```php
+<?php
+
+Schemer\Validator::any() // Accept all values of any type.
+    ->but(callable $f) // Add an extra validation step.
+
+ // Allowed values. This is a specialised Any.
+Schemer\Validator::allow(array $whitelist)
+
+// Validate according to a schema. This is a [key => Validator] set,
+// where the Validator can be any ValidatorInterface implementation.
+Schemer\Validator::assoc(array $schema = [])
+    ->length(int $count) // Set the required number of entries.
+    ->max(int $count) // Set the maximum number of entries.
+    ->min(int $count) // Set the minimum number of entries.
+    ->never(array $keys) // Add the key blacklist.
+    ->optional(array $schema) // A schema of optional keys.
+    ->only(array $keys) // Add the key whitelist.
+
+Schemer\Validator::boolean() // Accept only boolean values.
+    ->true() // Accept only 'true'.
+    ->false() // Accept only 'false'.
+
+// Accept an array of items all matching a given validator.
+Schemer\Validator::collection(Schemer\Validator\ValidatorInterface $validator)
+    ->length(int $count) // Set the required array length.
+    ->max(int $count) // Set the maximum array length.
+    ->min(int $count) // Set the minimum array length.
+
+    // The elements must be sorted, either with sort() or a given
+    // comparison function.
+    ->ordered(callable $comparator = null)
+    ->unique() // All values must be unique.
+
+// Accept objects of a given class. This is a specialised Any.
+Schemer\Validator::instanceOf(string $comparison)
+
+Schemer\Validator::integer() // Accept integer values. Specialised Real.
+
+// Accept a value that matches one of an array of validators.
+// This is a specialised Any.
+Schemer\Validator::oneOf(array $validators)
+
+Schemer\Validator::real() // Accept floating-point values.
+    ->exactly(float $value) // Set the required value.
+    ->max(float $value) // Set the maximum value.
+    ->min(float $value) // Set the minimum value.
+    ->negative() // Allow only values less than or equal to zero.
+    ->positive() // Allow only values greater than or equal to zero.
+
+ // Allow all values accept those from a given set. Specialised Any.
+Schemer\Validator::reject(array $blacklist)
+
+Schemer\Validator::text() // Accept string values.
+    ->alphanum() // Allow only alphanumeric strings.
+    ->email() // Allow only email addresses.
+    ->length(int $length) // Set the allowed string length.
+    ->lowercase() // Allow only lowercase strings.
+    ->max(int $length) // Set the maximum string length.
+    ->min(int $length) // Set the minimum string length.
+    ->regex(string $regex) // Set the regex to be matched.
+    ->uppercase() // Allow only uppercase strings.
+```
 
 ## Contributing
 
