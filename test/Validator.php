@@ -343,7 +343,7 @@ describe(Validator::class, function () {
     });
 
     context('::real', function () {
-        it('constructs an Real instance', function () {
+        it('constructs a Real instance', function () {
             expect(
                 Validator::real()
             )->toBeAnInstanceOf(Real::class);

@@ -12,7 +12,7 @@ class Collection extends ValidatorAbstract implements ValidatorInterface
     /**
      * The value must be a non-associative array with ordered keys.
      */
-    public function __construct(ValidatorAbstract $validator)
+    public function __construct(ValidatorInterface $validator)
     {
         $this->restrictions = [
             self::strictPredicate('is_array', 'not an array'),
@@ -52,7 +52,8 @@ class Collection extends ValidatorAbstract implements ValidatorInterface
      * @param int $count
      * @return string
      */
-    private static function elementf(int $count) : string {
+    private static function elementf(int $count) : string
+    {
         return sprintf('%d element%s', $count, $count === 1 ? '' : 's');
     }
 

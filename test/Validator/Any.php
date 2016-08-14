@@ -2,7 +2,8 @@
 
 namespace Schema\Test\Validator;
 
-use Schemer\Validator\{Any,ValidatorAbstract};
+use Schemer\Validator\Any;
+use Schemer\Validator\ValidatorAbstract;
 
 describe(Any::class, function () {
     context('Unaltered', function () {
@@ -37,7 +38,9 @@ describe(Any::class, function () {
                 (new Any)
                     ->but(
                         ValidatorAbstract::predicate(
-                            function ($x) { return $x === 1; },
+                            function ($x) {
+                                return $x === 1;
+                            },
                             'not correct'
                         )
                     )
@@ -51,7 +54,9 @@ describe(Any::class, function () {
                 (new Any)
                     ->but(
                         ValidatorAbstract::predicate(
-                            function ($x) { return $x === 1; },
+                            function ($x) {
+                                return $x === 1;
+                            },
                             'not correct'
                         )
                     )

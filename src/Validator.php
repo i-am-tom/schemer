@@ -63,7 +63,7 @@ class Validator
      * @return Schemer\Validator\Collection
      */
     public static function collection(
-        Validator\ValidatorAbstract $validator
+        Validator\ValidatorInterface $validator
     ) : Validator\Collection {
         return new Validator\Collection($validator);
     }
