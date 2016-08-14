@@ -23,7 +23,7 @@ abstract class FormatterAbstract implements FormatterInterface
      */
     public function construct(string $class) : FormatterAbstract
     {
-        return $this->pipe(function ($data) {
+        return $this->pipe(function ($data) use ($class) {
             return new $class($data);
         });
     }
