@@ -2,6 +2,7 @@
     "name": "i-am-tom/schemer",
     "description": "A Joi-like interface for validating data structures.",
     "license": "ISC",
+    "version": "2.0.0",
     "require-dev": {
         "crysalead/kahlan": "^2.5"
     },

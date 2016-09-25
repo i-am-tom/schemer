@@ -1,7 +1,10 @@
 # Schemer [![Build Status](https://travis-ci.org/i-am-tom/schemer.svg?branch=master)](https://travis-ci.org/i-am-tom/schemer)
 
-Schemer is a Joi-inspired library for validating and formatting data
-structures. Complex operations can be constructed by composition:
+```
+composer require i-am-tom/schemer
+```
+
+Schemer is a Joi-inspired library for validating and formatting data structures. Complex operations can be constructed by composition:
 
 ```php
 <?php
@@ -12,32 +15,54 @@ use Schemer\Validator as V;
 use Schemer\Formatter as F;
 
 $validator = V::assoc([
-    'username' => V::text()->min(3)->max(10)->alphanum(),
-    'age' => V::integer()->positive(),
-    'email' => V::text()->email(),
-    'friends' => V::collection(V::text()->min(3)->max(20))
+    'username' => V::text()
+        ->min(3)
+        ->max(10)
+        ->alphanum(),
+
+    'age' => V::integer()
+        ->positive(),
+
+    'email' => V::text()
+        ->email(),
+
+    'friends' => V::collection(
+        V::text()
+            ->min(3)
+            ->max(20)
+    )
 ]);
 
 $formatter = F::assoc([
     'age' => F::integer(),
-    'friends' => F::collection(F::text())
-])->only(['username', 'age', 'email', 'friends']);
+
+    'friends' => F::collection(
+        F::text()
+    )
+])->only([
+    'username',
+    'age',
+    'email',
+    'friends'
+]);
 
 // $_GET = [
 //     'username' => 'agilebear',
 //     'email' => 'hey@no.com',
-//     'age' => '13'
+//     'age' => '40'
 // ];
 
 $formatted = $formatter->format($_GET);
 // $formatted = [
 //     'username' => 'agilebear',
 //     'email' => 'hey@no.com',
-//     'age' => 13,
+//     'age' => 40,
 //     'friends' => []
 // ];
 
-$validator->validate($formatted)->isError(); // false
+$validator
+    ->validate($formatted)
+    ->isError(); // false
 
 $result = $validator->validate([
     'username' => 'criminal',
