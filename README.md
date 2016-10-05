@@ -137,6 +137,14 @@ Schemer\Formatter::text()
 ```php
 <?php
 
+// Included on every validator.
+Schemer\ValidatorAbstract
+  // Create a non-fatal validator from a bool-returning predicate function.
+  ->should(callable $predicate, string $error = 'unsatisfied predicate')
+
+  // Create a fatal validator from a bool-returning predicate function.
+  ->must(callable $predicate, string $error = 'unsatisfied predicate')
+
 Schemer\Validator::any() // Accept all values of any type.
     ->but(callable $f) // Add an extra validation step.
 

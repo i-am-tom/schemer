@@ -34,7 +34,10 @@ class ValidatorAbstract implements ValidatorInterface
      * @param string $error The failure error to use.
      * @return callable A restriction to pipe.
      */
-    public static function predicate(callable $predicate, string $error) : callable {
+    public static function predicate(
+        callable $predicate,
+        string $error
+    ) : callable {
         return function ($value) use ($predicate, $error) : Result {
             return $predicate($value) ? Result::success() : Result::failure($error);
         };
@@ -46,10 +49,39 @@ class ValidatorAbstract implements ValidatorInterface
      * @param string $error The failure error to use.
      * @return callable The created function.
      */
-    public static function strictPredicate(callable $predicate, string $error) : callable {
+    public static function strictPredicate(
+        callable $predicate,
+        string $error
+    ) : callable {
         return function ($value) use ($predicate, $error) : Result {
             return $predicate($value) ? Result::success() : Result::fatal($error);
         };
+    }
+
+    /**
+     * The value will be checked against a custom predicate.
+     * @param callable $predicate The predicate.
+     * @param string $error A custom error.
+     * @return ValidatorAbstract
+     */
+    public function should(
+        callable $validator,
+        string $error = 'unsatisfied predicate'
+    ) : ValidatorAbstract {
+        return $this->pipe(self::predicate($validator, $error));
+    }
+
+    /**
+     * The value will be checked against a custom (strict) predicate.
+     * @param callable $predicate The predicate.
+     * @param string $error A custom error.
+     * @return ValidatorAbstract
+     */
+    public function must(
+        callable $validator,
+        string $error = 'unsatisfied predicate'
+    ) : ValidatorAbstract {
+        return $this->pipe(self::strictPredicate($validator, $error));
     }
 
     /**
@@ -63,7 +95,7 @@ class ValidatorAbstract implements ValidatorInterface
             $this->restrictions,
             function ($result, $restriction) use ($value) : Result {
                 if ($result->isFatal()) {
-                  return $result;
+                    return $result;
                 }
 
                 return $result->concat($restriction($value));
