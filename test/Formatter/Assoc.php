@@ -88,6 +88,51 @@ describe(Assoc::class, function () {
         });
     });
 
+    context('->renameMany', function () {
+        it('waives arrays without given keys', function () {
+            expect(
+                (new Assoc)
+                    ->renameMany([
+                        'starship' => 'enterprise',
+                        'starboard' => 'pork pies'
+                    ])
+                    ->format(['Jean-Luc' => 'Picard'])
+            )->toBe(['Jean-Luc' => 'Picard']);
+        });
+
+        it('renames the given array keys', function () {
+            expect(
+                (new Assoc)
+                    ->renameMany([
+                        'blue steel' => 'phasers',
+                        'geordi' => 'Mr La Forge'
+                    ])
+                    ->format([
+                        'blue steel' => 'stun',
+                        'geordi' => 'engage'
+                    ])
+            )->toBe([
+                'phasers' => 'stun',
+                'Mr La Forge' => 'engage'
+            ]);
+        });
+
+        it('overwrites existing targets in order', function () {
+            expect(
+                (new Assoc)
+                    ->renameMany([
+                        'USS' => 'starship',
+                        'wat' => 'starship'
+                    ])
+                    ->format([
+                        'USS' => 'enterprise',
+                        'starship' => 'farragut',
+                        'wat' => 'WE BUILT THIS CITY'
+                    ])
+            )->toBe(['starship' => 'WE BUILT THIS CITY']);
+        });
+    });
+
     context('->strip', function () {
         it('waives arrays without given keys', function () {
             expect(

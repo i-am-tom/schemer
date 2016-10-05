@@ -70,6 +70,24 @@ class Assoc extends FormatterAbstract implements FormatterInterface
     }
 
     /**
+     * The array will have the given keys renamed.
+     * @param array $map [from => to] mappings.
+     * @return Schemer\Formatter\Assoc
+     */
+    public function renameMany(array $map) : Assoc
+    {
+        $pairs = array_map(function ($a, $b) {
+            return [$a, $b];
+        }, array_keys($map), array_values($map));
+
+        return array_reduce($pairs, function ($that, $pair) {
+            list ($from, $to) = $pair;
+
+            return $that->rename($from, $to);
+        }, $this);
+    }
+
+    /**
      * The array will not contain keys from a given list.
      * @param array $keys
      * @return Schemer\Formatter\Assoc

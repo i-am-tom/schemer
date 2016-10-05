@@ -100,6 +100,7 @@ $integer->validate(1)->isError(); // false
 Schemer\Formatter::assoc(array $schema)
     ->only(array $keys) // Strip unmentioned keys.
     ->rename(string $from, string $to) // Rename a key.
+    ->renameMany(array $map) // Rename keys according to a [key => value] map.
     ->strip(array $keys) // Strip mentioned keys.
 
 Schemer\Formatter::boolean() // Format as boolean.
