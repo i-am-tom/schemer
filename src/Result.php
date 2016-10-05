@@ -106,7 +106,7 @@ class Result
 
     /**
      * Transform every error within this result.
-     * @param callable $f [description]
+     * @param callable $f
      * @return Schemer\Result
      */
     public function map(callable $f) : Result
