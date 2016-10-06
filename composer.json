@@ -4,7 +4,7 @@
     "license": "ISC",
     "version": "2.1.0",
     "require-dev": {
-        "crysalead/kahlan": "^2.5"
+        "kahlan/kahlan": "^3.0"
     },
     "scripts": {
         "test": "vendor/bin/kahlan --spec=test --pattern=*.php --reporter=verbose"
