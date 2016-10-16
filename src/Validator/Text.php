@@ -124,7 +124,7 @@ class Text extends ValidatorAbstract implements ValidatorInterface
         return $this->pipe(
             self::predicate(
                 function ($value) use ($regex) {
-                    return preg_match($regex, $value) !== false;
+                    return preg_match($regex, $value) === 1;
                 },
                 "does not match $regex"
             )
