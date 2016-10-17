@@ -212,10 +212,10 @@ describe(Text::class, function () {
         it('rejects strings that don\'t', function () {
             expect(
                 (new Text)
-                    ->regex('/.+/')
-                    ->validate('')
+                    ->regex('/[a-z]/')
+                    ->validate('123')
                     ->errors()
-            )->toBe([]);
+            )->toBe(['does not match /[a-z]/']);
         });
     });
 
