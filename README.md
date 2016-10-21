@@ -162,13 +162,9 @@ Schemer\Validator::assoc(array $schema = [])
     ->optional(array $schema) // A schema of optional keys.
     ->only(array $keys) // Add the key whitelist.
 
-Schemer\Validator::boolean() // Accept only boolean values.
-    ->true() // Accept only 'true'.
-    ->false() // Accept only 'false'.
-
-Schemer\Validator::boolean("George says no") // Accept only boolean values, with a custom error.
-    ->true("that can't be true?") // Accept only 'true', with a custom error.
-    ->false("not not true") // Accept only 'false', with a custom error.
+Schemer\Validator::boolean([string $error]) // Accept only boolean values, with an optional custom error.
+    ->true([string $error]) // Accept only 'true', with an optional custom error.
+    ->false([string $error]) // Accept only 'false', with an optional custom error.
 
 // Accept an array of items all matching a given validator.
 Schemer\Validator::collection(Schemer\Validator\ValidatorInterface $validator)

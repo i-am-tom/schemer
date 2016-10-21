@@ -24,10 +24,10 @@ describe(Boolean::class, function () {
 
         it('rejects non-booleans, with custom error', function () {
             expect(
-                (new Boolean('Oh my'))
+                (new Boolean('George says no'))
                     ->validate('hello, Wimbledon')
                     ->errors()
-            )->toBe(['Oh my']);
+            )->toBe(['George says no']);
         });
     });
 
