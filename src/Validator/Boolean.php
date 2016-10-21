@@ -9,42 +9,45 @@ class Boolean extends ValidatorAbstract implements ValidatorInterface
 {
     /**
      * The value must be a boolean.
+     * @param string $errorMessage
      */
-    public function __construct()
+    public function __construct($errorMessage = 'not a boolean')
     {
         $this->restrictions = [
-            self::strictPredicate('is_bool', 'not a boolean')
+            self::strictPredicate('is_bool', $errorMessage)
         ];
     }
 
     /**
      * The value must be true.
+     * @param string $errorMessage
      * @return Schemer\Validator\Boolean
      */
-    public function true() : Boolean
+    public function true($errorMessage = 'not true') : Boolean
     {
         return $this->pipe(
             self::predicate(
                 function (bool $bool) : bool {
                     return !!$bool;
                 },
-                'not true'
+                $errorMessage
             )
         );
     }
 
     /**
      * The value must be false.
+     * @param string $errorMessage
      * @return Schemer\Validator\Boolean
      */
-    public function false() : Boolean
+    public function false($errorMessage = 'not false') : Boolean
     {
         return $this->pipe(
             self::predicate(
                 function (bool $bool) : bool {
                     return !$bool;
                 },
-                'not false'
+                $errorMessage
             )
         );
     }

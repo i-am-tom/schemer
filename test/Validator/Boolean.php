@@ -21,6 +21,14 @@ describe(Boolean::class, function () {
                     ->errors()
             )->toBe(['not a boolean']);
         });
+
+        it('rejects non-booleans, with custom error message', function () {
+            expect(
+                (new Boolean('Oh my'))
+                    ->validate('hello, Wimbledon')
+                    ->errors()
+            )->toBe(['Oh my']);
+        });
     });
 
     context('True-only', function () {
@@ -28,6 +36,15 @@ describe(Boolean::class, function () {
             expect(
                 (new Boolean)
                     ->true()
+                    ->validate(true)
+                    ->errors()
+            )->toBe([]);
+        });
+
+        it('accepts true, with custom error message', function () {
+            expect(
+                (new Boolean('Oh dear'))
+                    ->true('Oh dear oh dear')
                     ->validate(true)
                     ->errors()
             )->toBe([]);
@@ -41,6 +58,15 @@ describe(Boolean::class, function () {
                     ->errors()
             )->toBe(['not true']);
         });
+
+        it('rejects false, with custom error message', function () {
+            expect(
+                (new Boolean('Oh dear oh dear oh dear'))
+                    ->true('Oh deary dear')
+                    ->validate(false)
+                    ->errors()
+            )->toBe(['Oh deary dear']);
+        });
     });
 
     context('False-only', function () {
@@ -53,6 +79,15 @@ describe(Boolean::class, function () {
             )->toBe([]);
         });
 
+        it('accepts false, with custom error message', function () {
+            expect(
+                (new Boolean())
+                    ->false('Whoops!')
+                    ->validate(false)
+                    ->errors()
+            )->toBe([]);
+        });
+
         it('rejects true', function () {
             expect(
                 (new Boolean)
@@ -60,6 +95,15 @@ describe(Boolean::class, function () {
                     ->validate(true)
                     ->errors()
             )->toBe(['not false']);
+        });
+
+        it('rejects true, with custom error message', function () {
+            expect(
+                (new Boolean('Lions and tigers and bears?'))
+                    ->false('Oh my!')
+                    ->validate(true)
+                    ->errors()
+            )->toBe(['Oh my!']);
         });
     });
 });
