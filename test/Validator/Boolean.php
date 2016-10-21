@@ -22,7 +22,7 @@ describe(Boolean::class, function () {
             )->toBe(['not a boolean']);
         });
 
-        it('rejects non-booleans, with custom error message', function () {
+        it('rejects non-booleans, with custom error', function () {
             expect(
                 (new Boolean('Oh my'))
                     ->validate('hello, Wimbledon')
@@ -41,7 +41,7 @@ describe(Boolean::class, function () {
             )->toBe([]);
         });
 
-        it('accepts true, with custom error message', function () {
+        it('accepts true, with custom error', function () {
             expect(
                 (new Boolean('Oh dear'))
                     ->true('Oh dear oh dear')
@@ -59,7 +59,7 @@ describe(Boolean::class, function () {
             )->toBe(['not true']);
         });
 
-        it('rejects false, with custom error message', function () {
+        it('rejects false, with custom error', function () {
             expect(
                 (new Boolean('Oh dear oh dear oh dear'))
                     ->true('Oh deary dear')
@@ -79,7 +79,7 @@ describe(Boolean::class, function () {
             )->toBe([]);
         });
 
-        it('accepts false, with custom error message', function () {
+        it('accepts false, with custom error', function () {
             expect(
                 (new Boolean())
                     ->false('Whoops!')
@@ -97,7 +97,7 @@ describe(Boolean::class, function () {
             )->toBe(['not false']);
         });
 
-        it('rejects true, with custom error message', function () {
+        it('rejects true, with custom error', function () {
             expect(
                 (new Boolean('Lions and tigers and bears?'))
                     ->false('Oh my!')
