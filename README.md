@@ -166,6 +166,10 @@ Schemer\Validator::boolean() // Accept only boolean values.
     ->true() // Accept only 'true'.
     ->false() // Accept only 'false'.
 
+Schemer\Validator::boolean("George says no") // Accept only boolean values, with a custom error.
+    ->true("that can't be true?") // Accept only 'true', with a custom error.
+    ->false("not not true") // Accept only 'false', with a custom error.
+
 // Accept an array of items all matching a given validator.
 Schemer\Validator::collection(Schemer\Validator\ValidatorInterface $validator)
     ->length(int $count) // Set the required array length.
