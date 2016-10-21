@@ -21,6 +21,14 @@ describe(Real::class, function () {
                     ->errors()
             )->toBe(['not a float']);
         });
+
+        it('rejects non-floats, with custom error', function () {
+            expect(
+                (new Real('kinda?'))
+                    ->validate('ice cream float')
+                    ->errors()
+            )->toBe(['kinda?']);
+        });
     });
 
     context('->exactly', function () {
@@ -40,6 +48,24 @@ describe(Real::class, function () {
                     ->validate(2.5)
                     ->errors()
             )->toBe(['not exactly 2']);
+        });
+
+        it('rejects different floats, with custom error', function () {
+            expect(
+                (new Real)
+                    ->exactly(2, "that's ... not what I expected")
+                    ->validate(2.5)
+                    ->errors()
+            )->toBe(["that's ... not what I expected"]);
+        });
+
+        it('rejects different floats, with custom error format', function () {
+            expect(
+                (new Real)
+                    ->exactly(2, '%d be or not %1$d be')
+                    ->validate(2.5)
+                    ->errors()
+            )->toBe(['2 be or not 2 be']);
         });
     });
 
@@ -70,6 +96,15 @@ describe(Real::class, function () {
                     ->errors()
             )->toBe(['not at most 2']);
         });
+
+        it('rejects higher floats, with custom error', function () {
+            expect(
+                (new Real)
+                    ->max(9000, "It's over 9000!")
+                    ->validate(9000.1)
+                    ->errors()
+            )->toBe(["It's over 9000!"]);
+        });
     });
 
     context('->min', function () {
@@ -89,6 +124,15 @@ describe(Real::class, function () {
                     ->validate(1.9)
                     ->errors()
             )->toBe(['not at least 2']);
+        });
+
+        it('rejects lower floats, with custom error', function () {
+            expect(
+                (new Real)
+                    ->min(1, 'smaller than %d')
+                    ->validate(0.5)
+                    ->errors()
+            )->toBe(['smaller than 1']);
         });
 
         it('accepts higher floats', function () {
@@ -118,6 +162,15 @@ describe(Real::class, function () {
                     ->validate(0.5)
                     ->errors()
             )->toBe(['not at most 0']);
+        });
+
+        it('rejects > 0, with custom error', function () {
+            expect(
+                (new Real)
+                    ->negative('positive')
+                    ->validate(0.5)
+                    ->errors()
+            )->toBe(['positive']);
         });
 
         it('accepts < 0', function () {
@@ -156,6 +209,15 @@ describe(Real::class, function () {
                     ->validate(-0.5)
                     ->errors()
             )->toBe(['not at least 0']);
+        });
+
+        it('rejects < 0, with custom error', function () {
+            expect(
+                (new Real)
+                    ->positive('negative')
+                    ->validate(PHP_INT_MIN - 1)
+                    ->errors()
+            )->toBe(['negative']);
         });
     });
 });
