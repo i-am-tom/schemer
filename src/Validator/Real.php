@@ -9,30 +9,30 @@ class Real extends ValidatorAbstract implements ValidatorInterface
 {
     /**
      * The value must be a float.
-     * @param string $errorMessage
+     * @param string $error
      * @return Schemer\Validator\Real
      */
-    public function __construct(string $errorMessage = 'not a float')
+    public function __construct(string $error = 'not a float')
     {
         $this->restrictions = [
-            self::strictPredicate('is_float', $errorMessage)
+            self::strictPredicate('is_float', $error)
         ];
     }
 
     /**
      * The number must be exactly a given value.
      * @param float check
-     * @param string $errorMessage
+     * @param string $error
      * @return Schemer\Validator\Real
      */
-    public function exactly(float $check, string $errorMessage = 'not exactly %d') : Real
+    public function exactly(float $check, string $error = 'not exactly %d') : Real
     {
         return $this->pipe(
             self::predicate(
                 function (float $value) use ($check) : bool {
                     return $value === $check;
                 },
-                sprintf($errorMessage, $check)
+                sprintf($error, $check)
             )
         );
     }
@@ -40,17 +40,17 @@ class Real extends ValidatorAbstract implements ValidatorInterface
     /**
      * The number must be at most a given value.
      * @param float $max
-     * @param string $errorMessage
+     * @param string $error
      * @return Schemer\Validator\Real
      */
-    public function max(float $max, string $errorMessage = 'not at most %d') : Real
+    public function max(float $max, string $error = 'not at most %d') : Real
     {
         return $this->pipe(
             self::predicate(
                 function (float $value) use ($max) : bool {
                     return $value <= $max;
                 },
-                sprintf($errorMessage, $max)
+                sprintf($error, $max)
             )
         );
     }
@@ -58,38 +58,38 @@ class Real extends ValidatorAbstract implements ValidatorInterface
     /**
      * The number must be at least a given value.
      * @param float $min
-     * @param string $errorMessage
+     * @param string $error
      * @return Schemer\Validator\Real
      */
-    public function min(float $min, string $errorMessage = 'not at least %d') : Real
+    public function min(float $min, string $error = 'not at least %d') : Real
     {
         return $this->pipe(
             self::predicate(
                 function (float $value) use ($min) : bool {
                     return $value >= $min;
                 },
-                sprintf($errorMessage, $min)
+                sprintf($error, $min)
             )
         );
     }
 
     /**
      * The number must be negative (including zero).
-     * @param string $errorMessage
+     * @param string $error
      * @return Schemer\Validator\Real
      */
-    public function negative(string $errorMessage = 'not at most %d')
+    public function negative(string $error = 'not at most %d')
     {
-        return $this->max(0, $errorMessage);
+        return $this->max(0, $error);
     }
 
     /**
      * The number must be positive (including zero).
-     * @param string $errorMessage
+     * @param string $error
      * @return Schemer\Validator\Real
      */
-    public function positive(string $errorMessage = 'not at least %d')
+    public function positive(string $error = 'not at least %d')
     {
-        return $this->min(0, $errorMessage);
+        return $this->min(0, $error);
     }
 }
