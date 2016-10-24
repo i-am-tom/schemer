@@ -7,7 +7,7 @@ use Schemer\Result;
 /**
  * A catch-all validator.
  */
-class Any extends ValidatorAbstract implements ValidatorInterface
+class Any extends ValidatorAbstract
 {
     /**
      * Create a new any-type validator.

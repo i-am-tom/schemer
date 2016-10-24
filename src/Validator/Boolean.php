@@ -5,7 +5,7 @@ namespace Schemer\Validator;
 /**
  * Boolean validator.
  */
-class Boolean extends ValidatorAbstract implements ValidatorInterface
+class Boolean extends ValidatorAbstract
 {
     /**
      * The value must be a boolean.

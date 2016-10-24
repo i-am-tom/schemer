@@ -5,7 +5,7 @@ namespace Schemer\Formatter;
 /**
  * Array formatter.
  */
-class Collection extends FormatterAbstract implements FormatterInterface
+class Collection extends FormatterAbstract
 {
     /**
      * The value will be an array.

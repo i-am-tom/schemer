@@ -11,6 +11,7 @@ class Collection extends ValidatorAbstract implements ValidatorInterface
 {
     /**
      * The value must be a non-associative array with ordered keys.
+     * @param Schemer\Validator\ValidatorInterface $validator
      */
     public function __construct(ValidatorInterface $validator)
     {

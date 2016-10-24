@@ -5,7 +5,7 @@ namespace Schemer\Validator;
 /**
  * Real validator.
  */
-class Real extends ValidatorAbstract implements ValidatorInterface
+class Real extends ValidatorAbstract
 {
     /**
      * The value must be a float.

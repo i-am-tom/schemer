@@ -2,13 +2,11 @@
 
 namespace Schemer\Test\Validator;
 
-use Schemer\Validator\{
-    Any,
-    Boolean,
-    Collection,
-    Integer,
-    Text
-};
+use Schemer\Validator\Any;
+use Schemer\Validator\Boolean;
+use Schemer\Validator\Collection;
+use Schemer\Validator\Integer;
+use Schemer\Validator\Text;
 
 describe(Collection::class, function () {
     context('__construct', function () {

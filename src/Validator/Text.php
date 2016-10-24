@@ -7,7 +7,7 @@ use Schemer\Result;
 /**
  * Text validator.
  */
-class Text extends ValidatorAbstract implements ValidatorInterface
+class Text extends ValidatorAbstract
 {
     /**
      * The value must be a string.
