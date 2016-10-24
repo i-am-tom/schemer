@@ -22,6 +22,22 @@ describe(Real::class, function () {
             )->toBe([]);
         });
 
+        it('accepts infinity', function () {
+            expect(
+                (new Real)
+                    ->validate(INF)
+                    ->errors()
+            )->toBe([]);
+        });
+
+        it('accepts NaN', function () {
+            expect(
+                (new Real)
+                    ->validate(NAN)
+                    ->errors()
+            )->toBe([]);
+        });
+
         it('rejects booleans', function () {
             expect(
                 (new Real)
