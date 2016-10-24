@@ -14,6 +14,14 @@ describe(Real::class, function () {
             )->toBe([]);
         });
 
+        it('accepts int values', function () {
+            expect(
+                (new Real)
+                    ->validate(2)
+                    ->errors()
+            )->toBe([]);
+        });
+
         it('rejects non-floats', function () {
             expect(
                 (new Real)
@@ -29,6 +37,15 @@ describe(Real::class, function () {
                 (new Real)
                     ->exactly(2)
                     ->validate(2.0)
+                    ->errors()
+            )->toBe([]);
+        });
+
+        it('accepts equal ints', function () {
+            expect(
+                (new Real)
+                    ->exactly(2)
+                    ->validate(2)
                     ->errors()
             )->toBe([]);
         });
