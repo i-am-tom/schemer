@@ -22,10 +22,18 @@ describe(Real::class, function () {
             )->toBe([]);
         });
 
-        it('rejects non-floats', function () {
+        it('rejects booleans', function () {
             expect(
                 (new Real)
                     ->validate(true)
+                    ->errors()
+            )->toBe(['not a float']);
+        });
+
+        it('rejects numeric strings', function () {
+            expect(
+                (new Real)
+                    ->validate('2')
                     ->errors()
             )->toBe(['not a float']);
         });
