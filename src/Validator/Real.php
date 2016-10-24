@@ -14,7 +14,12 @@ class Real extends ValidatorAbstract implements ValidatorInterface
     public function __construct()
     {
         $this->restrictions = [
-            self::strictPredicate('is_float', 'not a float')
+            self::strictPredicate(
+                function($real) : bool {
+                    return is_int($real) || is_float($real);
+                },
+                'not a float'
+            )
         ];
     }
 

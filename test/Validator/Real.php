@@ -14,10 +14,42 @@ describe(Real::class, function () {
             )->toBe([]);
         });
 
-        it('rejects non-floats', function () {
+        it('accepts int values', function () {
+            expect(
+                (new Real)
+                    ->validate(2)
+                    ->errors()
+            )->toBe([]);
+        });
+
+        it('accepts infinity', function () {
+            expect(
+                (new Real)
+                    ->validate(INF)
+                    ->errors()
+            )->toBe([]);
+        });
+
+        it('accepts NaN', function () {
+            expect(
+                (new Real)
+                    ->validate(NAN)
+                    ->errors()
+            )->toBe([]);
+        });
+
+        it('rejects booleans', function () {
             expect(
                 (new Real)
                     ->validate(true)
+                    ->errors()
+            )->toBe(['not a float']);
+        });
+
+        it('rejects numeric strings', function () {
+            expect(
+                (new Real)
+                    ->validate('2')
                     ->errors()
             )->toBe(['not a float']);
         });
@@ -29,6 +61,15 @@ describe(Real::class, function () {
                 (new Real)
                     ->exactly(2)
                     ->validate(2.0)
+                    ->errors()
+            )->toBe([]);
+        });
+
+        it('accepts equal ints', function () {
+            expect(
+                (new Real)
+                    ->exactly(2)
+                    ->validate(2)
                     ->errors()
             )->toBe([]);
         });
