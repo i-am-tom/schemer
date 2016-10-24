@@ -135,6 +135,8 @@ Schemer\Formatter::text()
 
 ### `Schemer\Validator`
 
+Some methods take an optional custom error `string $error`
+
 ```php
 <?php
 
@@ -186,12 +188,12 @@ Schemer\Validator::integer() // Accept integer values. Specialised Real.
 // This is a specialised Any.
 Schemer\Validator::oneOf(array $validators)
 
-Schemer\Validator::real() // Accept floating-point values.
-    ->exactly(float $value) // Set the required value.
-    ->max(float $value) // Set the maximum value.
-    ->min(float $value) // Set the minimum value.
-    ->negative() // Allow only values less than or equal to zero.
-    ->positive() // Allow only values greater than or equal to zero.
+Schemer\Validator::real([string $error]) // Accept floating-point values.
+    ->exactly(float $value[, string $error]) // Set the required value.
+    ->max(float $value[, string $error]) // Set the maximum value.
+    ->min(float $value[, string $error]) // Set the minimum value.
+    ->negative([string $error]) // Allow only values less than or equal to zero.
+    ->positive([string $error]) // Allow only values greater than or equal to zero.
 
  // Allow all values accept those from a given set. Specialised Any.
 Schemer\Validator::reject(array $blacklist)
