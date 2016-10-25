@@ -14,7 +14,7 @@ class Boolean extends FormatterAbstract
     {
         $this->transformations = [
             function ($value) : bool {
-                return (bool) $value;
+                return 'false' === $value ? false : (bool) $value;
             }
         ];
     }
