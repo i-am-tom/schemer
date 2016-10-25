@@ -16,14 +16,4 @@ class Any extends ValidatorAbstract
     {
         $this->restrictions = [];
     }
-
-    /**
-     * Create an any-type validator with a caveat :-)
-     * @param callable $f
-     * @return Schemer\Validator\Any
-     */
-    public function but(callable $f) : Any
-    {
-        return $this->pipe($f);
-    }
 }

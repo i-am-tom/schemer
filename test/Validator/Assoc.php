@@ -215,11 +215,20 @@ describe(Assoc::class, function () {
     context('->nestedValidate', function () {
         it('validates single-level arrays', function () {
             expect(
-                array_map(function ($result) {
-                    return $result->errors();
-                }, (new Assoc(['a' => new Integer, 'b' => new Integer]))
-                    ->nestedValidate(['a' => 3, 'b' => 'Chimamanda'])
-                    ->inner)
+                array_map(
+                    function ($result) {
+                        return $result->errors();
+                    },
+                    iterator_to_array(
+                        (new Assoc([
+                            'a' => new Integer,
+                            'b' => new Integer
+                        ]))->nestedValidate([
+                            'a' => 3,
+                            'b' => 'Chimamanda'
+                        ])
+                    )
+                )
             )->toBe([
                 'a' => [],
                 'b' => ['not an integer']
@@ -242,7 +251,7 @@ describe(Assoc::class, function () {
                     'Yar' => 2
                 ]);
 
-                expect($results->outer->errors())->toBe([]);
+                expect($results->outer()->errors())->toBe([]);
             });
 
             it('validates nested values', function () use ($validator) {
@@ -254,9 +263,7 @@ describe(Assoc::class, function () {
                 ]);
 
                 expect(
-                    $results
-                        ->inner['Ishara']
-                        ->inner['Tasha']
+                    $results['Ishara']['Tasha']
                         ->errors()
                 )->toBe(['not an integer']);
             });
@@ -269,12 +276,7 @@ describe(Assoc::class, function () {
                     'Yar' => 2
                 ]);
 
-                expect(
-                    $results
-                        ->inner['Yar']
-                        ->outer
-                        ->errors()
-                )->toBe(['not an array']);
+                expect($results['Yar']->errors())->toBe(['not an array']);
             });
         });
     });

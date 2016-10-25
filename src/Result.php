@@ -30,7 +30,7 @@ class Result
 
     /**
      * Join two results together, combining their errors.
-     * @param Result $that
+     * @param Schemer\Result $that
      * @return Schemer\Result
      */
     public function concat(Result $that) : Result

@@ -34,12 +34,14 @@ class ValidatorAbstract implements ValidatorInterface
      * @param string $error The failure error to use.
      * @return callable A restriction to pipe.
      */
-    public static function predicate(
+    protected static function predicate(
         callable $predicate,
         string $error
     ) : callable {
         return function ($value) use ($predicate, $error) : Result {
-            return $predicate($value) ? Result::success() : Result::failure($error);
+            return $predicate($value)
+                ? Result::success()
+                : Result::failure($error);
         };
     }
 
@@ -49,12 +51,14 @@ class ValidatorAbstract implements ValidatorInterface
      * @param string $error The failure error to use.
      * @return callable The created function.
      */
-    public static function strictPredicate(
+    protected static function strictPredicate(
         callable $predicate,
         string $error
     ) : callable {
         return function ($value) use ($predicate, $error) : Result {
-            return $predicate($value) ? Result::success() : Result::fatal($error);
+            return $predicate($value)
+                ? Result::success()
+                : Result::fatal($error);
         };
     }
 

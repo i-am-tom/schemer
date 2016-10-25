@@ -12,8 +12,7 @@ interface NestableInterface extends ValidatorInterface
     /**
      * Validate a value, and maintain structure.
      * @param mixed $value The variable to validate.
-     * @return stdClass Has keys for "errors" (for outer errors) and
-     *                  "values" (for inner values).
+     * @return Schemer\NestableResult
      */
     public function nestedValidate($value) : NestableResult;
 }

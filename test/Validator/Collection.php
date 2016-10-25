@@ -236,11 +236,14 @@ describe(Collection::class, function () {
     context('->nestedValidate', function () {
         it('validates single-level arrays', function () {
             expect(
-                array_map(function ($result) {
-                    return $result->errors();
-                }, (new Collection(new Integer))
-                    ->nestedValidate([3, 'Adichie'])
-                    ->inner)
+                array_map(
+                    function ($result) {
+                        return $result->errors();
+                    }, iterator_to_array(
+                        (new Collection(new Integer))
+                            ->nestedValidate([3, 'Adichie'])
+                    )
+                )
             )->toBe([[], ['not an integer']]);
         });
 
@@ -253,7 +256,6 @@ describe(Collection::class, function () {
                 expect(
                     $validator
                         ->nestedValidate([])
-                        ->outer
                         ->errors()
                 )->toBe([]);
             });
@@ -263,12 +265,7 @@ describe(Collection::class, function () {
                     [2, 'Bell'], 'Hooks'
                 ]);
 
-                expect(
-                    $results
-                        ->inner[0]
-                        ->inner[1]
-                        ->errors()
-                )->toBe(['not an integer']);
+                expect($results[0][1]->errors())->toBe(['not an integer']);
             });
 
             it('validates inner nestables', function () use ($validator) {
@@ -276,12 +273,7 @@ describe(Collection::class, function () {
                     [2, 'Bell'], 'Hooks'
                 ]);
 
-                expect(
-                    $results
-                        ->inner[1]
-                        ->outer
-                        ->errors()
-                )->toBe(['not an array']);
+                expect($results[1]->errors())->toBe(['not an array']);
             });
         });
     });

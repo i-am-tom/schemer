@@ -14,7 +14,7 @@ abstract class NestableAbstract extends ValidatorAbstract implements
     /**
      * Create a structure-mimicking error object.
      * @param mixed $value The value to validate.
-     * @return stdClass [errors => Result, values => [...]]
+     * @return Result The result of non-nestable validation.
      */
     protected function validateSimple($value) : Result
     {
@@ -32,15 +32,23 @@ abstract class NestableAbstract extends ValidatorAbstract implements
     }
 
     /**
+     * Return a nested Result after validation that matches the
+     * structure of the validator.
+     * @param mixed $value The value to validate.
+     * @return Result The errors, if any.
+     */
+    abstract public function nestedValidate($value) : NestableResult;
+
+    /**
      * Collapse a nested error into a standard Result object.
      * @param array $errors The nested error set.
      * @return Result The unnested Result object.
      */
     protected static function unnest(NestableResult $struct) : Result
     {
-        $result = $struct->outer;
+        $result = $struct->outer();
 
-        foreach ($struct->inner as $key => $error) {
+        foreach ($struct as $key => $error) {
             if ($error instanceof NestableResult) {
                 $error = self::unnest($error);
             }
