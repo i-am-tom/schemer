@@ -9,6 +9,10 @@ describe(Boolean::class, function () {
         expect((new Boolean)->format(false))->toBe(false);
     });
 
+    it('casts non-boolean values', function () {
+        expect((new Boolean)->format(112358))->toBe(true);
+    });
+
     it('handles the string "true"', function () {
         expect((new Boolean)->format('true'))->toBe(true);
     });
@@ -29,7 +33,15 @@ describe(Boolean::class, function () {
         expect((new Boolean)->format(''))->toBe(false);
     });
 
-    it('casts non-boolean values', function () {
-        expect((new Boolean)->format(112358))->toBe(true);
+    it('doesn\'t over do it', function () {
+        expect((new Boolean)->format('no'))->toBe(true);
+    });
+
+    it('doesn\'t try too hard', function () {
+        expect((new Boolean)->format('off'))->toBe(true);
+    });
+
+    it('doesn\'t speak georgian', function () {
+        expect((new Boolean)->format('ყალბი'))->toBe(true);
     });
 });
