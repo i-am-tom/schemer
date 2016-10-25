@@ -5,7 +5,7 @@ namespace Schemer\Formatter;
 /**
  * String formatter.
  */
-class Text extends FormatterAbstract implements FormatterInterface
+class Text extends FormatterAbstract
 {
     /**
      * The value will be a string.

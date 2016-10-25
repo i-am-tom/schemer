@@ -3,17 +3,27 @@
 namespace Schemer\Validator;
 
 use Schemer\Result;
+use Schemer\NestableResult;
 
 /**
  * Collection validator.
  */
-class Collection extends ValidatorAbstract implements ValidatorInterface
+class Collection extends NestableAbstract
 {
     /**
+     * The validator for the collection's inner type.
+     * @var Schemer\Validator\ValidatorInterface
+     */
+    private $inner = null;
+
+    /**
      * The value must be a non-associative array with ordered keys.
+     * @param Schemer\Validator\ValidatorInterface $validator
      */
     public function __construct(ValidatorInterface $validator)
     {
+        $this->inner = $validator;
+
         $this->restrictions = [
             self::strictPredicate('is_array', 'not an array'),
 
@@ -23,27 +33,7 @@ class Collection extends ValidatorAbstract implements ValidatorInterface
                         : array_keys($values) === range(0, count($values) - 1);
                 },
                 'not a standard array'
-            ),
-
-            function (array $values) use ($validator) : Result {
-                $result = Result::success();
-
-                foreach ($values as $index => $value) {
-                    $current = $validator->validate($value);
-
-                    if (!$current->isError()) {
-                        continue;
-                    }
-
-                    $result = $result->concat(
-                        $current->map(function (string $error) use ($index) : string {
-                            return "$error at index $index";
-                        })
-                    );
-                }
-
-                return $result;
-            }
+            )
         ];
     }
 
@@ -145,5 +135,25 @@ class Collection extends ValidatorAbstract implements ValidatorInterface
                 'not all unique elements'
             )
         );
+    }
+
+    /**
+     * Validate a structure, and return a NestedResult with a
+     * sequential array of Results (and further possible nesting).
+     * @param mixed $value The value to validate.
+     * @return NestableResult The result of the operation.
+     */
+    public function nestedValidate($value) : NestableResult
+    {
+        $outer = parent::validateSimple($value);
+
+        // Fatal outer errors => no inner checks.
+        $inner = $outer->isFatal() ? [] : $value;
+
+        return new NestableResult($outer, array_map(function ($element) {
+            return $this->inner instanceof NestableInterface
+                ? $this->inner->nestedValidate($element)
+                : $this->inner->validate($element);
+        }, $inner));
     }
 }

@@ -5,7 +5,7 @@ namespace Schemer\Formatter;
 /**
  * Blank formatter.
  */
-class Any extends FormatterAbstract implements FormatterInterface
+class Any extends FormatterAbstract
 {
     /**
      * The value will be unchanged.

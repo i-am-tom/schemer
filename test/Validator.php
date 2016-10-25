@@ -227,7 +227,7 @@ describe(Validator::class, function () {
                     Validator::collection(Validator::text())
                         ->validate([2])
                         ->errors()
-                )->toBe(['not a string at index 0']);
+                )->toBe(['0: not a string']);
             });
 
             it('rejects a bad value at non-zero index', function () {
@@ -235,7 +235,7 @@ describe(Validator::class, function () {
                     Validator::collection(Validator::text())
                         ->validate(['', '', true])
                         ->errors()
-                )->toBe(['not a string at index 2']);
+                )->toBe(['2: not a string']);
             });
         });
     });

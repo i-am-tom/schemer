@@ -3,38 +3,32 @@
 namespace Schemer\Validator;
 
 use Schemer\Result;
+use Schemer\NestableResult;
 
 /**
  * Associative array validator.
  */
-class Assoc extends ValidatorAbstract implements ValidatorInterface
+class Assoc extends NestableAbstract
 {
+    /**
+     * The schema for this associative validator.
+     * @var array The associative array schema.
+     */
+    private $schema = [];
+
     /**
      * The associative array must contain these keys.
      * @param array $schema The schema to validate.
      */
     public function __construct(array $schema = [])
     {
+        $this->schema = $schema;
+
         $this->restrictions = [
-            self::strictPredicate('is_array', 'not an array'),
-
-            function (array $assoc) use ($schema) : Result {
-                $result = Result::success();
-
-                foreach ($schema as $key => $validator) {
-                    $result = $result->concat(
-                        isset($assoc[$key])
-                            ? $validator
-                                ->validate($assoc[$key])
-                                ->map(function (string $error) use ($key) : string {
-                                    return "$key: $error";
-                                })
-                            : Result::failure("missing '$key'")
-                    );
-                }
-
-                return $result;
-            }
+            self::strictPredicate(
+                'is_array',
+                'not an array'
+            )
         ];
     }
 
@@ -173,5 +167,38 @@ class Assoc extends ValidatorAbstract implements ValidatorInterface
 
             return $result;
         });
+    }
+
+    /**
+     * Validate an associative structure, and return a NestedResult
+     * with an assoc array of Results (and possible further nesting).
+     * @param mixed $value The value to validate.
+     * @return stdClass The nested structure.
+     * @see NestableAbstract::nestedValidate()
+     */
+    public function nestedValidate($value) : NestableResult
+    {
+        $outer = parent::validateSimple($value);
+
+        // Fatal error => no inner validation.
+        $schema = $outer->isFatal() ? [] : $this->schema;
+        $values = [];
+
+        // Regrettably, as neat as I could get it...
+        foreach ($schema as $key => $validator) {
+            if (!isset($value[$key])) {
+                $values[$key] = Result::failure('missing key');
+
+                if ($validator instanceof NestableAbstract) {
+                    $values[$key] = NestableResult::lift($values[$key]);
+                }
+            } else {
+                $values[$key] = $validator instanceof NestableAbstract
+                    ? $validator->nestedValidate($value[$key])
+                    : $validator->validate($value[$key]);
+            }
+        }
+
+        return new NestableResult($outer, $values);
     }
 }

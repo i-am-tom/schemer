@@ -2,13 +2,11 @@
 
 namespace Schemer\Test\Validator;
 
-use Schemer\Validator\{
-    Any,
-    Boolean,
-    Collection,
-    Integer,
-    Text
-};
+use Schemer\Validator\Any;
+use Schemer\Validator\Boolean;
+use Schemer\Validator\Collection;
+use Schemer\Validator\Integer;
+use Schemer\Validator\Text;
 
 describe(Collection::class, function () {
     context('__construct', function () {
@@ -42,7 +40,7 @@ describe(Collection::class, function () {
                     (new Collection(new Boolean))
                         ->validate([true, true, 2.0])
                         ->errors()
-                )->toBe(['not a boolean at index 2']);
+                )->toBe(['2: not a boolean']);
             });
         });
     });
@@ -232,6 +230,81 @@ describe(Collection::class, function () {
                     ->validate([1, 2, 3, 1, 4])
                     ->errors()
             )->toBe(['not all unique elements']);
+        });
+    });
+
+    context('->nestedValidate', function () {
+        it('validates single-level arrays', function () {
+            expect(
+                array_map(
+                    function ($result) {
+                        return $result->errors();
+                    }, iterator_to_array(
+                        (new Collection(new Integer))
+                            ->nestedValidate([3, 'Adichie'])
+                    )
+                )
+            )->toBe([[], ['not an integer']]);
+        });
+
+        context('nested arrays', function () {
+            $validator = new Collection(
+                new Collection(new Integer)
+            );
+
+            it('validates the outer container', function () use ($validator) {
+                expect(
+                    $validator
+                        ->nestedValidate([])
+                        ->errors()
+                )->toBe([]);
+            });
+
+            it('validates nested values', function () use ($validator) {
+                $results = $validator->nestedValidate([
+                    [2, 'Bell'], 'Hooks'
+                ]);
+
+                expect($results[0][1]->errors())->toBe(['not an integer']);
+            });
+
+            it('validates inner nestables', function () use ($validator) {
+                $results = $validator->nestedValidate([
+                    [2, 'Bell'], 'Hooks'
+                ]);
+
+                expect($results[1]->errors())->toBe(['not an array']);
+            });
+        });
+    });
+
+    context('->validate', function () {
+        it('validates single-level arrays', function () {
+            expect(
+                (new Collection(new Integer))
+                    ->validate([3, 'Threeish'])
+                    ->errors()
+            )->toBe(['1: not an integer']);
+        });
+
+        context('nested arrays', function () {
+            $validator = new Collection(
+                new Collection(new Integer)
+            );
+
+            it('validates the outer container', function () use ($validator) {
+                expect($validator->validate([])->errors())->toBe([]);
+            });
+
+            it('validates nested values', function () use ($validator) {
+                expect(
+                    $validator
+                        ->validate([
+                            [2, 'Margaret'], 'Atwood'
+                        ])
+                        ->errors()
+                )->toBe(['0: 1: not an integer', '1: not an array']);
+            });
         });
     });
 });

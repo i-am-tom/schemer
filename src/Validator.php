@@ -25,16 +25,17 @@ class Validator
      */
     public static function allow(array $whitelist) : Validator\Any
     {
-        return self::any()->but(
-            function ($value) use ($whitelist) : Result {
+        return self::any()->should(
+            function ($value) use ($whitelist) : bool {
                 foreach ($whitelist as $candidate) {
                     if ($candidate === $value) {
-                        return Result::success();
+                        return true;
                     }
                 }
 
-                return Result::failure('not in the whitelist');
-            }
+                return false;
+            },
+            'not in the whitelist'
         );
     }
 
@@ -76,19 +77,12 @@ class Validator
     public static function instanceOf(string $comparison) : Validator\Any
     {
         return self::any()
-            ->but(
-                Validator\ValidatorAbstract::strictPredicate(
-                    'is_object',
-                    'not an object'
-                )
-            )
-            ->but(
-                Validator\ValidatorAbstract::predicate(
-                    function ($value) use ($comparison) : bool {
-                        return $value instanceof $comparison;
-                    },
-                    "not an instance of $comparison"
-                )
+            ->must('is_object', 'not an object')
+            ->must(
+                function ($value) use ($comparison) : bool {
+                    return $value instanceof $comparison;
+                },
+                "not an instance of $comparison"
             );
     }
 
@@ -108,21 +102,17 @@ class Validator
      */
     public static function oneOf(array $validators) : Validator\Any
     {
-        return self::any()->but(
-            Validator\ValidatorAbstract::predicate(
-                function ($value) use ($validators) : bool {
-                    foreach ($validators as $validator) {
-                        if ($validator->validate($value)->isError()) {
-                            continue;
-                        }
-
+        return self::any()->should(
+            function ($value) use ($validators) : bool {
+                foreach ($validators as $validator) {
+                    if (!$validator->validate($value)->isError()) {
                         return true;
                     }
+                }
 
-                    return false;
-                },
-                'matches none of the options'
-            )
+                return false;
+            },
+            'matches none of the options'
         );
     }
 
@@ -142,16 +132,17 @@ class Validator
      */
     public static function reject(array $blacklist) : Validator\Any
     {
-        return self::any()->but(
-            function ($value) use ($blacklist) : Result {
+        return self::any()->should(
+            function ($value) use ($blacklist) : bool {
                 foreach ($blacklist as $candidate) {
                     if ($candidate === $value) {
-                        return Result::failure('in the blacklist');
+                        return false;
                     }
                 }
 
-                return Result::success();
-            }
+                return true;
+            },
+            'in the blacklist'
         );
     }
 

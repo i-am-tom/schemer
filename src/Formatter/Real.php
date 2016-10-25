@@ -5,7 +5,7 @@ namespace Schemer\Formatter;
 /**
  * Real formatter.
  */
-class Real extends FormatterAbstract implements FormatterInterface
+class Real extends FormatterAbstract
 {
     /**
      * The value will be a floating-point number.

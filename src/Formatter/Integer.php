@@ -5,7 +5,7 @@ namespace Schemer\Formatter;
 /**
  * Integer formatter.
  */
-class Integer extends FormatterAbstract implements FormatterInterface
+class Integer extends FormatterAbstract
 {
     /**
      * The value will be a integer.

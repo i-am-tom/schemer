@@ -31,38 +31,4 @@ describe(Any::class, function () {
             )->toBe([]);
         });
     });
-
-    context('::but', function () {
-        it('allows passes for extra restrictions', function () {
-            expect(
-                (new Any)
-                    ->but(
-                        ValidatorAbstract::predicate(
-                            function ($x) {
-                                return $x === 1;
-                            },
-                            'not correct'
-                        )
-                    )
-                    ->validate(1)
-                    ->errors()
-            )->toBe([]);
-        });
-
-        it('rejects failures on extra restrictions', function () {
-            expect(
-                (new Any)
-                    ->but(
-                        ValidatorAbstract::predicate(
-                            function ($x) {
-                                return $x === 1;
-                            },
-                            'not correct'
-                        )
-                    )
-                    ->validate(2)
-                    ->errors()
-            )->toBe(['not correct']);
-        });
-    });
 });

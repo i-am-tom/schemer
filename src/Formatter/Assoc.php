@@ -5,7 +5,7 @@ namespace Schemer\Formatter;
 /**
  * Associative array formatter.
  */
-class Assoc extends FormatterAbstract implements FormatterInterface
+class Assoc extends FormatterAbstract
 {
     /**
      * The value will be an associative array.

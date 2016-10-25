@@ -5,7 +5,7 @@ namespace Schemer\Formatter;
 /**
  * Boolean formatter.
  */
-class Boolean extends FormatterAbstract implements FormatterInterface
+class Boolean extends FormatterAbstract
 {
     /**
      * The value will be a boolean.
