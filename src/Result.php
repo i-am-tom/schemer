@@ -68,7 +68,7 @@ class Result
      * @param string $error
      * @return Schemer\Result
      */
-    public static function failure(string $error) : Result
+    public static function failure(/* ValidationError */ $error) : Result
     {
         return new self([$error]);
     }

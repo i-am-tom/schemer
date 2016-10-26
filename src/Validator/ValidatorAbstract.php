@@ -36,7 +36,7 @@ class ValidatorAbstract implements ValidatorInterface
      */
     protected static function predicate(
         callable $predicate,
-        string $error
+        /* ValidationError */ $error
     ) : callable {
         return function ($value) use ($predicate, $error) : Result {
             return $predicate($value)

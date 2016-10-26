@@ -78,8 +78,19 @@ describe(Text::class, function () {
                 (new Text)
                     ->email()
                     ->validate('test.com')
-                    ->errors()
-            )->toBe(['not an email']);
+                    ->errors()[0]
+                    ->__toString()
+            )->toBe('not an email');
+        });
+
+        it('can be translated', function () {
+            expect(
+                (new Text)
+                    ->email()
+                    ->validate('test.com')
+                    ->errors()[0]
+                    ->translate('hello')
+            )->toBe('hello');
         });
     });
 

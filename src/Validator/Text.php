@@ -3,6 +3,7 @@
 namespace Schemer\Validator;
 
 use Schemer\Result;
+use Schemer\ValidationError;
 
 /**
  * Text validator.
@@ -49,7 +50,7 @@ class Text extends ValidatorAbstract
                 function (string $value) : bool {
                     return filter_var($value, FILTER_VALIDATE_EMAIL) !== false;
                 },
-                'not an email'
+                new ValidationError('NOT_EMAIL')
             )
         );
     }
