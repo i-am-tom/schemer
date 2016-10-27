@@ -78,9 +78,8 @@ describe(Text::class, function () {
                 (new Text)
                     ->email()
                     ->validate('test.com')
-                    ->errors()[0]
-                    ->__toString()
-            )->toBe('not an email');
+                    ->errors()
+            )->toBe(['not an email']);
         });
 
         it('can be translated', function () {
@@ -88,9 +87,8 @@ describe(Text::class, function () {
                 (new Text)
                     ->email()
                     ->validate('test.com')
-                    ->errors()[0]
-                    ->translate('hello')
-            )->toBe('hello');
+                    ->translate(['NOT_EMAIL' => 'hello'])
+            )->toBe(['hello']);
         });
     });
 

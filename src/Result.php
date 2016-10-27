@@ -60,7 +60,25 @@ class Result
      */
     public function errors() : array
     {
-        return $this->errors;
+        return array_map(function ($error) {
+            return (string) $error;
+        }, $this->errors);
+    }
+
+    /**
+     * Get and translate the errors for this result.
+     * @param array $translations
+     * @return array
+     */
+    public function translate(array $translations) : array
+    {
+        return array_reduce($this->errors, function (array $carry, ValidationError $error) use ($translations) {
+            if (array_key_exists($error->token(), $translations)) {
+                return array_merge($carry, [$error->translate($translations[$error->token()])]);
+            }
+
+            return array_merge($carry, (string) $error);
+        }, []);
     }
 
     /**

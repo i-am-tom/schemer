@@ -17,8 +17,14 @@ class ValidationError
 
     public function __construct(string $token, array $values /* this name is bad */ = [])
     {
+        $this->token = $token;
         $this->message = $this->messages[$token];
         $this->values = $values;
+    }
+
+    public function token()
+    {
+        return $this->token;
     }
 
     public function translate(string $message)
