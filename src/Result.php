@@ -80,7 +80,7 @@ class Result
                     return array_merge($carry, [$error->translate($translations[$error->token()])]);
                 }
 
-                return array_merge($carry, (string) $error);
+                return array_merge($carry, [(string) $error]);
             },
             []
         );
