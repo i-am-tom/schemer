@@ -60,7 +60,7 @@ class Result
      */
     public function errors() : array
     {
-        return array_map(function ($error) {
+        return array_map(function (/* ValidationError */ $error) : string {
             return (string) $error;
         }, $this->errors);
     }
@@ -72,13 +72,17 @@ class Result
      */
     public function translate(array $translations) : array
     {
-        return array_reduce($this->errors, function (array $carry, ValidationError $error) use ($translations) {
-            if (array_key_exists($error->token(), $translations)) {
-                return array_merge($carry, [$error->translate($translations[$error->token()])]);
-            }
+        return array_reduce(
+            $this->errors,
+            function (array $carry, ValidationError $error) use ($translations) : array {
+                if (array_key_exists($error->token(), $translations)) {
+                    return array_merge($carry, [$error->translate($translations[$error->token()])]);
+                }
 
-            return array_merge($carry, (string) $error);
-        }, []);
+                return array_merge($carry, (string) $error);
+            },
+            []
+        );
     }
 
     /**

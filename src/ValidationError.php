@@ -31,12 +31,12 @@ final class ValidationError
         $this->values = $values;
     }
 
-    public function token()
+    public function token() : string
     {
         return $this->token;
     }
 
-    public function translate(string $message)
+    public function translate(string $message) : string
     {
         // prefer a custom message over this translation
         if ($this->message !== $this->messages[$this->token]) {
@@ -46,7 +46,7 @@ final class ValidationError
         return sprintf($message, ...$this->values);
     }
 
-    public function __toString()
+    public function __toString() : string
     {
         return sprintf($this->message, ...$this->values);
     }
