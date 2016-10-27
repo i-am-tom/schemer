@@ -60,6 +60,7 @@ class Result
      */
     public function errors() : array
     {
+        // TODO: $this->translate([]);
         return array_map(function (/* ValidationError */ $error) : string {
             return (string) $error;
         }, $this->errors);
