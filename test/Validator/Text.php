@@ -90,6 +90,24 @@ describe(Text::class, function () {
                     ->translate(['NOT_EMAIL' => 'hello'])
             )->toBe(['hello']);
         });
+
+        it('can accept a custom message', function () {
+            expect(
+                (new Text)
+                    ->email('hi')
+                    ->validate('test.com')
+                    ->errors()
+            )->toBe(['hi']);
+        });
+
+        it('prefers the message over a translation', function () {
+            expect(
+                (new Text)
+                    ->email('cool and good')
+                    ->validate('test.com')
+                    ->translate(['NOT_EMAIL' => 'wrong and bad'])
+            )->toBe(['cool and good']);
+        });
     });
 
     context('->length', function () {

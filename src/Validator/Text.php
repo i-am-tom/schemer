@@ -43,14 +43,14 @@ class Text extends ValidatorAbstract
      * This string must be an email.
      * @return Schemer\Validator\Text
      */
-    public function email() : Text
+    public function email(string $error = '') : Text
     {
         return $this->pipe(
             self::predicate(
                 function (string $value) : bool {
                     return filter_var($value, FILTER_VALIDATE_EMAIL) !== false;
                 },
-                new ValidationError('NOT_EMAIL')
+                new ValidationError(ValidationError::NOT_EMAIL, $error)
             )
         );
     }
