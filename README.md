@@ -135,7 +135,7 @@ Schemer\Formatter::text()
 
 ### `Schemer\Validator`
 
-Some methods take an optional custom error `string $error`
+Many of these methods accept an optional custom `$error` string, which overrides the default error
 
 ```php
 <?php
